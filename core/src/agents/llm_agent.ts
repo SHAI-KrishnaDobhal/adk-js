@@ -6,6 +6,8 @@
 
 import {GenerateContentConfig, Modality, Schema} from '@google/genai';
 import {context, trace} from '@opentelemetry/api';
+import {InputValidationError} from '../errors/input_validation_error.js';
+import {NotFoundError} from '../errors/not_found_error.js';
 import {FinishTaskTool} from '../tools/finish_task_tool.js';
 import {FunctionTool} from '../tools/function_tool.js';
 import {AsyncQueue} from '../utils/async_queue.js';
@@ -626,15 +628,17 @@ export class LlmAgent extends BaseAgent<LlmAgentConfig> {
     // Validate generateContentConfig.
     if (config.generateContentConfig) {
       if (config.generateContentConfig.tools) {
-        throw new Error('All tools must be set via LlmAgent.tools.');
+        throw new InputValidationError(
+          'All tools must be set via LlmAgent.tools.',
+        );
       }
       if (config.generateContentConfig.systemInstruction) {
-        throw new Error(
+        throw new InputValidationError(
           'System instruction must be set via LlmAgent.instruction.',
         );
       }
       if (config.generateContentConfig.responseSchema) {
-        throw new Error(
+        throw new InputValidationError(
           'Response schema must be set via LlmAgent.output_schema.',
         );
       }
@@ -690,7 +694,7 @@ export class LlmAgent extends BaseAgent<LlmAgentConfig> {
       }
       ancestorAgent = ancestorAgent.parentAgent;
     }
-    throw new Error(`No model found for ${this.name}.`);
+    throw new InputValidationError(`No model found for ${this.name}.`);
   }
 
   /**
@@ -1898,7 +1902,7 @@ export class LlmAgent extends BaseAgent<LlmAgentConfig> {
    * @param invocationContext The current invocation context.
    * @param agentName The name of the agent to retrieve.
    * @returns The agent with the given name.
-   * @throws Error if the agent is not found.
+   * @throws NotFoundError if the agent is not found.
    */
   private getAgentByName(
     invocationContext: InvocationContext,
@@ -1907,7 +1911,9 @@ export class LlmAgent extends BaseAgent<LlmAgentConfig> {
     const rootAgent = requireAgent(invocationContext).rootAgent;
     const agentToRun = rootAgent.findAgent(agentName);
     if (!agentToRun) {
-      throw new Error(`Agent ${agentName} not found in the agent tree.`);
+      throw new NotFoundError(
+        `Agent ${agentName} not found in the agent tree.`,
+      );
     }
     return agentToRun;
   }

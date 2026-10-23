@@ -9,6 +9,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import {fileURLToPath, pathToFileURL} from 'url';
 
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {logger} from '../utils/logger.js';
 
 import {
@@ -66,7 +67,10 @@ export class FileArtifactService implements BaseArtifactService {
         : rootDirOrUri;
       this.rootDir = path.resolve(rootDir);
     } catch (e) {
-      throw new Error(`Invalid root directory: ${rootDirOrUri}`, {cause: e});
+      throw new InputValidationError(
+        `Invalid root directory: ${rootDirOrUri}`,
+        {cause: e},
+      );
     }
   }
 
@@ -78,7 +82,9 @@ export class FileArtifactService implements BaseArtifactService {
     customMetadata,
   }: SaveArtifactRequest): Promise<number> {
     if (!artifact.inlineData && !artifact.text && !artifact.fileData) {
-      throw new Error('Artifact must have either inlineData or text content.');
+      throw new InputValidationError(
+        'Artifact must have either inlineData or text content.',
+      );
     }
 
     const artifactDir = getArtifactDir(
@@ -112,7 +118,9 @@ export class FileArtifactService implements BaseArtifactService {
     } else {
       fileUri = artifact.fileData!.fileUri;
       if (!fileUri) {
-        throw new Error('Artifact fileData must have a fileUri.');
+        throw new InputValidationError(
+          'Artifact fileData must have a fileUri.',
+        );
       }
       mimeType = artifact.fileData!.mimeType;
     }
@@ -412,7 +420,7 @@ const SAFE_SEGMENT_RE = /^[a-zA-Z0-9_@-][a-zA-Z0-9_.@-]{0,255}$/;
 
 export function assertSafeSegment(value: string, label: string): void {
   if (!value || !SAFE_SEGMENT_RE.test(value)) {
-    throw new Error(
+    throw new InputValidationError(
       `[FileArtifactService] Invalid ${label}: value contains disallowed characters.`,
     );
   }
@@ -426,7 +434,7 @@ export function assertInsideRoot(
   const root = path.resolve(rootDir);
   const resolved = path.resolve(resolvedPath);
   if (!resolved.startsWith(root + path.sep) && resolved !== root) {
-    throw new Error(
+    throw new InputValidationError(
       `[FileArtifactService] ${label} escapes storage root. Resolved: ${resolved}, Root: ${root}`,
     );
   }
@@ -486,7 +494,7 @@ function getArtifactDir(
     scopeRoot = getUserArtifactsDir(userRoot);
   } else {
     if (!sessionId) {
-      throw new Error(
+      throw new InputValidationError(
         'Session ID must be provided for session-scoped artifacts.',
       );
     }
@@ -500,13 +508,17 @@ function getArtifactDir(
   cleanFilename = cleanFilename.trim();
 
   if (path.isAbsolute(cleanFilename)) {
-    throw new Error(`Absolute artifact filename ${filename} is not permitted.`);
+    throw new InputValidationError(
+      `Absolute artifact filename ${filename} is not permitted.`,
+    );
   }
 
   const artifactDir = path.resolve(scopeRoot, cleanFilename);
   const relative = path.relative(scopeRoot, artifactDir);
   if (relative.startsWith('..') || path.isAbsolute(relative)) {
-    throw new Error(`Artifact filename ${filename} escapes storage directory.`);
+    throw new InputValidationError(
+      `Artifact filename ${filename} escapes storage directory.`,
+    );
   }
   if (relative === '' || relative === '.') {
     return path.join(scopeRoot, 'artifact');

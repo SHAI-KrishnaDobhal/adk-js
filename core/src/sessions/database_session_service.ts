@@ -9,6 +9,9 @@ import type {
   LockMode as LockModeEnum,
   MikroORM as MikroORMClass,
 } from '@mikro-orm/core';
+import {AlreadyExistsError} from '../errors/already_exists_error.js';
+import {InputValidationError} from '../errors/input_validation_error.js';
+import {SessionNotFoundError} from '../errors/session_not_found_error.js';
 import type {MikroORMOptions as MikroDBOptions} from './db/operations.js';
 
 import {Event} from '../events/event.js';
@@ -113,7 +116,9 @@ export class DatabaseSessionService extends BaseSessionService {
       this.connectionString = connectionStringOrOptions;
     } else {
       if (!connectionStringOrOptions.driver) {
-        throw new Error('Driver is required when passing options object.');
+        throw new InputValidationError(
+          'Driver is required when passing options object.',
+        );
       }
 
       this.options = connectionStringOrOptions;
@@ -157,7 +162,7 @@ export class DatabaseSessionService extends BaseSessionService {
       userId,
     });
     if (existing) {
-      throw new Error(`Session with id ${id} already exists.`);
+      throw new AlreadyExistsError(`Session with id ${id} already exists.`);
     }
 
     let appStateModel = await em.findOne(StorageAppState, {appName});
@@ -432,7 +437,9 @@ export class DatabaseSessionService extends BaseSessionService {
       );
 
       if (!storageSession) {
-        throw new Error(`Session ${session.id} not found for appendEvent`);
+        throw new SessionNotFoundError(
+          `Session ${session.id} not found for appendEvent`,
+        );
       }
 
       let appStateModel = await txEm.findOne(StorageAppState, {

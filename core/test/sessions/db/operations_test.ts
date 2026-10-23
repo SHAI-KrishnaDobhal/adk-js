@@ -7,6 +7,7 @@
 import {Configuration, MikroORM} from '@mikro-orm/core';
 import {SqliteDriver} from '@mikro-orm/sqlite';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
+import {InputValidationError} from '../../../src/errors/input_validation_error.js';
 import {
   ensureDatabaseCreated,
   getConnectionOptionsFromUri,
@@ -653,6 +654,9 @@ describe('operations', () => {
       await expect(
         getConnectionOptionsFromUri('invalid://user:pass@localhost/db'),
       ).rejects.toThrow('Unsupported database URI');
+      await expect(
+        getConnectionOptionsFromUri('invalid://user:pass@localhost/db'),
+      ).rejects.toThrow(InputValidationError);
     });
   });
 

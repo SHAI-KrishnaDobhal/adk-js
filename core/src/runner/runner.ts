@@ -29,6 +29,8 @@ import {
   isSessionArtifactService,
   SessionArtifactService,
 } from '../artifacts/session_artifact_service.js';
+import {InputValidationError} from '../errors/input_validation_error.js';
+import {SessionNotFoundError} from '../errors/session_not_found_error.js';
 
 import {BaseCredentialService} from '../auth/credential_service/base_credential_service.js';
 import {
@@ -199,7 +201,7 @@ export class Runner {
     const appName = input.appName ?? input.app?.name;
     const agent = input.app?.rootAgent ?? input.agent;
     if (!agent) {
-      throw new Error(
+      throw new InputValidationError(
         'agent must be provided in runner constructor (or via app.rootAgent)',
       );
     }
@@ -323,11 +325,11 @@ export class Runner {
 
           if (!session) {
             if (!this.appName) {
-              throw new Error(
+              throw new InputValidationError(
                 `Session lookup failed: appName must be provided in runner constructor (or via app.name)`,
               );
             }
-            throw new Error(
+            throw new SessionNotFoundError(
               `Session not found: ${sessionId} (appName=${this.appName}, userId=${userId})`,
             );
           }
@@ -393,7 +395,7 @@ export class Runner {
           // =========================================================================
           if (newMessage) {
             if (!newMessage.parts?.length) {
-              throw new Error('No parts in the newMessage.');
+              throw new InputValidationError('No parts in the newMessage.');
             }
 
             // Directly saves the artifacts (if applicable) in the user message and
@@ -756,7 +758,9 @@ export class Runner {
     liveSessionResumptionHandle?: string;
   }): AsyncGenerator<Event, void, undefined> {
     if (!params.liveRequestQueue) {
-      throw new Error('liveRequestQueue is required for runLive.');
+      throw new InputValidationError(
+        'liveRequestQueue is required for runLive.',
+      );
     }
 
     if (!isBaseAgent(this.agent)) {
@@ -965,7 +969,7 @@ export function determineAgentForResumption(
       session.events,
     );
     if (conflictingAuthors) {
-      throw new Error(
+      throw new InputValidationError(
         'Function responses in the last event resolve to function calls ' +
           `from more than one agent (at least "${conflictingAuthors[0]}" ` +
           `and "${conflictingAuthors[1]}"); cannot determine a single ` +
@@ -1114,12 +1118,12 @@ function getAllToolsets(agent: BaseAgent): BaseToolset[] {
  * later checks to sort out.
  *
  * @param newMessage The message about to be appended to the session.
- * @throws {Error} If the message contains a reserved function call.
+ * @throws {InputValidationError} If the message contains a reserved function call.
  */
 function rejectReservedFunctionCalls(newMessage: Content | undefined): void {
   const reserved = reservedFunctionCallName(newMessage);
   if (reserved) {
-    throw new Error(
+    throw new InputValidationError(
       `A client message may not contain a '${reserved}' function call: it is ` +
         'raised by the framework, and can only be answered with a function ' +
         'response.',

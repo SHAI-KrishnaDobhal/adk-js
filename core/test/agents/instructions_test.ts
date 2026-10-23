@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {InvocationContext, ReadonlyContext} from '@google/adk';
+import {InvocationContext, NotFoundError, ReadonlyContext} from '@google/adk';
 import {afterEach, describe, expect, it, vi} from 'vitest';
 import {injectSessionState} from '../../src/agents/instructions.js';
 
@@ -219,6 +219,9 @@ describe('injectSessionState', () => {
       await expect(
         injectSessionState('{artifact.missing.txt}', ctx),
       ).rejects.toThrow('Artifact missing.txt not found.');
+      await expect(
+        injectSessionState('{artifact.missing.txt}', ctx),
+      ).rejects.toThrow(NotFoundError);
     });
 
     it('resolves missing optional artifact to empty string', async () => {

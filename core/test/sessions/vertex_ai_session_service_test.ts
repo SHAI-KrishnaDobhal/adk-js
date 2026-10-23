@@ -8,6 +8,7 @@ import {Sessions} from '@google-cloud/vertexai/build/src/genai/sessions.js';
 import {
   createEvent,
   createSession,
+  InputValidationError,
   isCompactedEvent,
   State,
   VertexAiSessionService,
@@ -382,6 +383,14 @@ describe('VertexAiSessionService', () => {
       ).rejects.toThrow(
         "Cannot specify both 'ttl' and 'expireTime' simultaneously.",
       );
+      await expect(
+        service.createSession({
+          appName: '12345',
+          userId: 'testUser',
+          ttl: '7200s',
+          expireTime: '2025-10-01T00:00:00Z',
+        }),
+      ).rejects.toThrow(InputValidationError);
       expect(mockClient.createInternal).not.toHaveBeenCalled();
     });
   });

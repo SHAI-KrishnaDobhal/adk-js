@@ -6,6 +6,7 @@
 
 import {FunctionCall} from '@google/genai';
 
+import {InputValidationError} from '../../errors/input_validation_error.js';
 import {
   Event,
   getFunctionCalls,
@@ -168,7 +169,7 @@ function collectResumeInputs(events: Event[]): Record<string, unknown> {
         const mismatch = interruptResponseMismatch(fr.id, response, schema);
         if (mismatch) {
           if (isCurrentTurn) {
-            throw new Error(mismatch);
+            throw new InputValidationError(mismatch);
           }
           continue;
         }

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {
   createEvent,
   Event,
@@ -183,7 +184,7 @@ export class RemoteAgent extends BaseAgent<RemoteAgentConfig> {
         ? runtimeSubAgents.length > 0
         : Boolean(runtimeSubAgents)
     ) {
-      throw new Error('subAgents is disabled in RemoteAgent.');
+      throw new InputValidationError('subAgents is disabled in RemoteAgent.');
     }
     super({...config, subAgents: []});
     this.url = config.url;

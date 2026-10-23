@@ -5,6 +5,7 @@
  */
 
 import type {MikroORM, Options} from '@mikro-orm/core';
+import {InputValidationError} from '../../errors/input_validation_error.js';
 import {logger} from '../../utils/logger.js';
 import {loadOptionalPeer} from '../../utils/optional_peer.js';
 import {redactUriPassword} from '../../utils/redact_uri.js';
@@ -238,7 +239,7 @@ function buildPostgresOptions(uri: string, driver: unknown): MikroORMOptions {
     } as MikroORMOptions;
   }
 
-  throw new Error(
+  throw new InputValidationError(
     `Unrecognized postgres connection URI: ${redactUriPassword(uri)}`,
   );
 }
@@ -324,7 +325,7 @@ function buildMySqlFamilyOptions(
     } as MikroORMOptions;
   }
 
-  throw new Error(
+  throw new InputValidationError(
     `Unrecognized MySQL/MariaDB connection URI: ${redactUriPassword(uri)}`,
   );
 }
@@ -340,7 +341,7 @@ function buildMySqlFamilyOptions(
  *
  * @param uri The database connection URI (e.g., "postgres://user:password@host:port/database")
  * @returns MikroORM Options configured for the database
- * @throws Error if the URI is invalid or unsupported
+ * @throws InputValidationError if the URI is invalid or unsupported
  */
 export async function getConnectionOptionsFromUri(
   uri: string,
@@ -396,7 +397,9 @@ export async function getConnectionOptionsFromUri(
     } as MikroORMOptions;
   }
 
-  throw new Error(`Unsupported database URI: ${redactUriPassword(uri)}`);
+  throw new InputValidationError(
+    `Unsupported database URI: ${redactUriPassword(uri)}`,
+  );
 }
 
 /**

@@ -6,6 +6,7 @@
 
 import {
   Event,
+  InputValidationError,
   InvocationContext,
   LoopAgent,
   PluginManager,
@@ -310,6 +311,15 @@ describe('RemoteAgent', () => {
         },
       ]),
     ).toThrowError('subAgents is disabled in RemoteAgent.');
+    expect(() =>
+      Reflect.construct(RemoteAgent, [
+        {
+          name: 'invalid_remote',
+          url: 'https://example.test/agent',
+          subAgents: [new LoopAgent({name: 'child'})],
+        },
+      ]),
+    ).toThrow(InputValidationError);
   });
 
   it('identifies RemoteAgent via isRemoteAgent, supports clone, and rejects runLive', async () => {

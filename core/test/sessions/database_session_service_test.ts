@@ -5,6 +5,7 @@
  */
 
 import {
+  AlreadyExistsError,
   createEvent,
   createEventActions,
   DatabaseSessionService,
@@ -421,6 +422,13 @@ describe('DatabaseSessionService', () => {
         sessionId: 's1',
       }),
     ).rejects.toThrow('Session with id s1 already exists');
+    await expect(
+      service.createSession({
+        appName: 'app1',
+        userId: 'u1',
+        sessionId: 's1',
+      }),
+    ).rejects.toThrow(AlreadyExistsError);
 
     // Test requesting non-existent session
     const noSession = await service.getSession({

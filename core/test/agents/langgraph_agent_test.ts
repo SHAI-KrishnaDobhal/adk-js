@@ -7,6 +7,7 @@
 import {
   CompiledGraphLike,
   Event,
+  InputValidationError,
   InvocationContext,
   LangGraphAIMessage,
   LangGraphAgent,
@@ -490,5 +491,6 @@ describe('LangGraphAgent', () => {
     await expect(run()).rejects.toThrowError(
       "LangGraphAgent 'missing_get_state_agent' requires graph.getState() when graph.checkpointer is configured.",
     );
+    await expect(run()).rejects.toThrow(InputValidationError);
   });
 });

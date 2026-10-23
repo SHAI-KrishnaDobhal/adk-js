@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {FileArtifactService} from '@google/adk';
+import {FileArtifactService, InputValidationError} from '@google/adk';
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
@@ -172,6 +172,9 @@ describe('FileArtifactService', () => {
         expect(() =>
           assertInsideRoot('/tmp/root/../outside', '/tmp/root', 'test'),
         ).toThrow('escapes storage root');
+        expect(() =>
+          assertInsideRoot('/tmp/root/../outside', '/tmp/root', 'test'),
+        ).toThrow(InputValidationError);
       });
       it('allows a path equal to root', () => {
         expect(() =>

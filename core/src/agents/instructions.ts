@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {NotFoundError} from '../errors/not_found_error.js';
 import {State} from '../sessions/state.js';
 import {asSafePartForLlm} from '../tools/load_artifacts_tool.js';
 import type {WorkflowInstructionScope} from './invocation_context.js';
@@ -61,7 +62,7 @@ async function resolveKey(
       if (isOptional) {
         return '';
       }
-      throw new Error(`Artifact ${fileName} not found.`);
+      throw new NotFoundError(`Artifact ${fileName} not found.`);
     }
     // Same conversion as the load_artifacts tool, so text-like inline data is
     // injected as text instead of base64 JSON.
@@ -76,7 +77,7 @@ async function resolveKey(
     if (isOptional) {
       return '';
     }
-    throw new Error(`Context variable not found: \`${key}\`.`);
+    throw new NotFoundError(`Context variable not found: \`${key}\`.`);
   }
 
   // Step 4: Workflow — resolve `{Class.field}` from the current node input.

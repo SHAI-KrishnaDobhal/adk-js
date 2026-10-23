@@ -13,6 +13,7 @@ import {
   SpeechConfig,
 } from '@google/genai';
 
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {logger} from '../utils/logger.js';
 
 /**
@@ -182,7 +183,7 @@ export interface RunConfig {
  *
  * @param params - Optional partial {@link RunConfig} overriding defaults.
  * @returns A merged {@link RunConfig} object.
- * @throws {Error} When `params.maxLlmCalls` exceeds `Number.MAX_SAFE_INTEGER`.
+ * @throws {InputValidationError} When `params.maxLlmCalls` exceeds `Number.MAX_SAFE_INTEGER`.
  * @throws {Error} When `params.streamingMode` is {@link StreamingMode.BIDI}.
  */
 export function createRunConfig(params: Partial<RunConfig> = {}) {
@@ -208,7 +209,7 @@ function validateStreamingMode(streamingMode?: StreamingMode): void {
 
 function validateMaxLlmCalls(value: number): number {
   if (value > Number.MAX_SAFE_INTEGER) {
-    throw new Error(
+    throw new InputValidationError(
       `maxLlmCalls should be less than ${Number.MAX_SAFE_INTEGER}.`,
     );
   }

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {CompactedEvent, createEvent} from '@google/adk';
+import {CompactedEvent, createEvent, InputValidationError} from '@google/adk';
 import {Content} from '@google/genai';
 import {describe, expect, it} from 'vitest';
 import {
@@ -373,6 +373,9 @@ describe('getContents', () => {
 
     expect(() => getContents([e0, e1, e2], 'my_agent')).toThrowError(
       'No function call event found for function responses ids: id2',
+    );
+    expect(() => getContents([e0, e1, e2], 'my_agent')).toThrow(
+      InputValidationError,
     );
   });
 

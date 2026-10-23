@@ -19,6 +19,7 @@ import {
   GenerateContentResponseUsageMetadata,
   GroundingMetadata,
 } from '@google/genai';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {isCompactedEvent} from '../events/compacted_event.js';
 import {experimental} from '../utils/experimental.js';
 
@@ -176,7 +177,7 @@ export class VertexAiSessionService extends BaseSessionService {
       this.sessions = options.sessions;
     } else {
       if (!this.projectId || !this.location) {
-        throw new Error(
+        throw new InputValidationError(
           this.expressModeApiKey
             ? EXPRESS_MODE_UNSUPPORTED_MESSAGE
             : 'Project ID and Location are required.',
@@ -201,7 +202,7 @@ export class VertexAiSessionService extends BaseSessionService {
       /^projects\/([a-zA-Z0-9-_]+)\/locations\/([a-zA-Z0-9-_]+)\/reasoningEngines\/(\d+)$/;
     const match = appName.match(pattern);
     if (!match) {
-      throw new Error(
+      throw new InputValidationError(
         `App name ${appName} is not valid. It should either be the full ReasoningEngine resource name, or the reasoning engine id.`,
       );
     }
@@ -223,7 +224,7 @@ export class VertexAiSessionService extends BaseSessionService {
   }: VertexAiCreateSessionRequest): Promise<Session> {
     // The API rejects both together; fail before the RPC.
     if (ttl != null && expireTime != null) {
-      throw new Error(
+      throw new InputValidationError(
         "Cannot specify both 'ttl' and 'expireTime' simultaneously.",
       );
     }

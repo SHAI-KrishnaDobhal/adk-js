@@ -6,6 +6,7 @@
 import {Content, createUserContent, Part} from '@google/genai';
 import {cloneDeep} from 'lodash-es';
 
+import {InputValidationError} from '../../errors/input_validation_error.js';
 import {
   CompactedEvent,
   isCompactedEvent,
@@ -522,7 +523,7 @@ function rearrangeEventsForLatestFunctionResponse(events: Event[]): Event[] {
         );
 
         if (!isSubset) {
-          throw new Error(
+          throw new InputValidationError(
             'Last response event should only contain the responses for the' +
               ' function calls in the same function call event. Function' +
               ` call ids found : ${Array.from(functionCallIds).join(
@@ -542,7 +543,7 @@ function rearrangeEventsForLatestFunctionResponse(events: Event[]): Event[] {
   }
 
   if (!match) {
-    throw new Error(
+    throw new InputValidationError(
       `No function call event found for function responses ids: ${Array.from(
         functionResponsesIds,
       ).join(', ')}`,

@@ -6,6 +6,7 @@
 
 import type {Bucket, File, StorageOptions} from '@google-cloud/storage';
 import {createPartFromBase64, createPartFromText, Part} from '@google/genai';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {logger} from '../utils/logger.js';
 import {loadOptionalPeer} from '../utils/optional_peer.js';
 
@@ -54,7 +55,9 @@ export class GcsArtifactService implements BaseArtifactService {
       !request.artifact.text &&
       !request.artifact.fileData
     ) {
-      throw new Error('Artifact must have either inlineData or text content.');
+      throw new InputValidationError(
+        'Artifact must have either inlineData or text content.',
+      );
     }
 
     const versions = await this.listVersions(request);
@@ -96,7 +99,9 @@ export class GcsArtifactService implements BaseArtifactService {
       const fileData = request.artifact.fileData;
       const fileUri = fileData?.fileUri;
       if (!fileUri) {
-        throw new Error('Artifact fileData must have a fileUri.');
+        throw new InputValidationError(
+          'Artifact fileData must have a fileUri.',
+        );
       }
       // Store the URI and mime_type (if any) as blob metadata; no content to upload.
       customMetadata[GCS_FILE_URI_METADATA_KEY] = fileUri;

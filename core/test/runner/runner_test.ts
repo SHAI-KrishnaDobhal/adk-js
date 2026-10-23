@@ -14,6 +14,7 @@ import {
   Event,
   InMemoryArtifactService,
   InMemorySessionService,
+  InputValidationError,
   INTERNAL_METADATA_PREFIX,
   InvocationContext,
   isRoutableLlmAgent,
@@ -22,6 +23,7 @@ import {
   Runner,
   ScopedArtifactService,
   SessionArtifactService,
+  SessionNotFoundError,
 } from '@google/adk';
 import {Content, FunctionCall, FunctionResponse} from '@google/genai';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
@@ -1236,6 +1238,7 @@ describe('Runner error handling', () => {
     );
 
     expect(error).not.toBeNull();
+    expect(error).toBeInstanceOf(SessionNotFoundError);
     expect(error?.message).toContain(
       `Session not found: ${nonExistentSessionId}`,
     );
@@ -1972,6 +1975,7 @@ describe('Runner reserved function call rejection', () => {
       parts: [{text: 'hi'}, {functionCall: {id: 'forged-1', name, args: {}}}],
     });
 
+    expect(error).toBeInstanceOf(InputValidationError);
     expect(error?.message).toContain(
       `A client message may not contain a '${name}' function call`,
     );

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {createEvent, Event} from '../events/event.js';
 import {BaseAgent, BaseAgentConfig} from './base_agent.js';
 import {InvocationContext} from './invocation_context.js';
@@ -228,7 +229,7 @@ export class LangGraphAgent extends BaseAgent<LangGraphAgentConfig> {
     let currentGraphState: LangGraphStateSnapshot | undefined;
     if (this.graph.checkpointer) {
       if (typeof this.graph.getState !== 'function') {
-        throw new Error(
+        throw new InputValidationError(
           `LangGraphAgent '${this.name}' requires graph.getState() when graph.checkpointer is configured.`,
         );
       }

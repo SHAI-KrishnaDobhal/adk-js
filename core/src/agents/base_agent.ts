@@ -7,6 +7,7 @@
 import {Content} from '@google/genai';
 import {context, trace} from '@opentelemetry/api';
 
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {createEvent, Event} from '../events/event.js';
 
 import {
@@ -208,7 +209,7 @@ export abstract class BaseAgent<
    */
   clone(overrides?: Partial<TConfig>): this {
     if (overrides && 'parentAgent' in overrides) {
-      throw new Error(
+      throw new InputValidationError(
         'Cannot update `parentAgent` field in clone. Parent agent is set ' +
           'only when the parent agent is instantiated with the sub-agents.',
       );
@@ -553,7 +554,7 @@ export abstract class BaseAgent<
   private setParentAgentForSubAgents(): void {
     for (const subAgent of this.subAgents) {
       if (subAgent.parentAgent) {
-        throw new Error(
+        throw new InputValidationError(
           `Agent "${
             subAgent.name
           }" already has a parent agent, current parent: "${
@@ -575,7 +576,7 @@ export abstract class BaseAgent<
  */
 function validateAgentName(name: string): string {
   if (!isIdentifier(name)) {
-    throw new Error(
+    throw new InputValidationError(
       `Found invalid agent name: "${
         name
       }". Agent name must be a valid identifier. It should start with a letter (a-z, A-Z) or an underscore (_), and can only contain letters, digits (0-9), underscores, and hyphens.`,
@@ -583,7 +584,7 @@ function validateAgentName(name: string): string {
   }
 
   if (name === 'user') {
-    throw new Error(
+    throw new InputValidationError(
       `Agent name cannot be 'user'. 'user' is reserved for end-user's input.`,
     );
   }

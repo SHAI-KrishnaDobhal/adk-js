@@ -25,6 +25,7 @@ import {
   FunctionTool,
   Gemini,
   InMemorySessionService,
+  InputValidationError,
   INTERACTIONS_REQUEST_PROCESSOR,
   InvocationContext,
   LiveRequestQueue,
@@ -2985,6 +2986,7 @@ describe('LlmAgent canonical fields and config validation', () => {
     expect(() => agent.canonicalModel).toThrow(
       'No model found for test_agent.',
     );
+    expect(() => agent.canonicalModel).toThrow(InputValidationError);
   });
 
   it('test_canonical_model_str', () => {

@@ -7,8 +7,9 @@
 import {
   FileArtifactService,
   GcsArtifactService,
-  InMemoryArtifactService,
   getArtifactServiceFromUri,
+  InMemoryArtifactService,
+  InputValidationError,
 } from '@google/adk';
 import {describe, expect, it} from 'vitest';
 
@@ -37,6 +38,9 @@ describe('getArtifactServiceFromUri', () => {
   it('throws error for unsupported uri', () => {
     expect(() => getArtifactServiceFromUri('unsupported://uri')).toThrow(
       'Unsupported artifact service URI: unsupported://uri',
+    );
+    expect(() => getArtifactServiceFromUri('unsupported://uri')).toThrow(
+      InputValidationError,
     );
   });
 });

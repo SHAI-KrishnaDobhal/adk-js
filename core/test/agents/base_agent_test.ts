@@ -9,17 +9,18 @@ import {
   BaseAgent,
   BaseAgentConfig,
   Context,
+  createEvent,
+  createSession,
   Event,
   FunctionTool,
   InMemoryArtifactService,
+  InputValidationError,
   InvocationContext,
   LlmAgent,
   PluginManager,
   ScopedArtifactService,
   Session,
   SingleAgentCallback,
-  createEvent,
-  createSession,
 } from '@google/adk';
 import {Content} from '@google/genai';
 import {describe, expect, it, vi} from 'vitest';
@@ -256,6 +257,9 @@ describe('BaseAgent', () => {
 
       expect(() => agent.clone({parentAgent: wouldBeParent})).toThrow(
         'Cannot update `parentAgent` field in clone.',
+      );
+      expect(() => agent.clone({parentAgent: wouldBeParent})).toThrow(
+        InputValidationError,
       );
     });
 

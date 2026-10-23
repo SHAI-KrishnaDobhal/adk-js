@@ -5,9 +5,10 @@
  */
 
 import {
-  InMemorySessionService,
-  VertexAiSessionService,
   getSessionServiceFromUri,
+  InMemorySessionService,
+  InputValidationError,
+  VertexAiSessionService,
 } from '@google/adk';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 
@@ -24,6 +25,9 @@ describe('Registry', () => {
       ).to.throw(
         'Unsupported session service URI: unsupported://localhost:5432/mydb',
       );
+      expect(() =>
+        getSessionServiceFromUri('unsupported://localhost:5432/mydb'),
+      ).to.throw(InputValidationError);
     });
 
     describe('for "vertexai://" uri', () => {

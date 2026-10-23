@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {redactUriPassword} from '../utils/redact_uri.js';
 import {BaseSessionService} from './base_session_service.js';
 import {
@@ -37,5 +38,7 @@ export function getSessionServiceFromUri(uri: string): BaseSessionService {
     });
   }
 
-  throw new Error(`Unsupported session service URI: ${redactUriPassword(uri)}`);
+  throw new InputValidationError(
+    `Unsupported session service URI: ${redactUriPassword(uri)}`,
+  );
 }
