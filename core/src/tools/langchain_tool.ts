@@ -7,6 +7,7 @@
 import {FunctionDeclaration} from '@google/genai';
 
 import {Context} from '../agents/context.js';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {SchemaLike, toJsonSchema} from '../utils/schema.js';
 import {isZodObject, isZodSchema} from '../utils/simple_zod_to_json.js';
 import {GoogleLLMVariant} from '../utils/variant_utils.js';
@@ -319,7 +320,7 @@ export class LangchainTool extends FunctionTool<ToolInputParameters> {
       );
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      throw new Error(
+      throw new InputValidationError(
         `Failed to build function declaration for Langchain tool: ${message}`,
         {cause: error},
       );

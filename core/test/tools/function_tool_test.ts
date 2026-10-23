@@ -4,7 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {Context, FunctionTool, isFunctionTool} from '@google/adk';
+import {
+  Context,
+  FunctionTool,
+  InputValidationError,
+  isFunctionTool,
+} from '@google/adk';
 import {Type} from '@google/genai';
 import {beforeEach, describe, expect, it} from 'vitest';
 import {z as z3} from 'zod/v3';
@@ -1141,6 +1146,16 @@ describe('FunctionTool', () => {
             )(),
           }),
       ).toThrow('Tool name cannot be empty');
+      expect(
+        () =>
+          new FunctionTool({
+            description: 'Anonymous function without a name.',
+            execute: (
+              () => () =>
+                'ok'
+            )(),
+          }),
+      ).toThrow(InputValidationError);
     });
 
     it('test_run_async_with_tool_context_async_func', async () => {

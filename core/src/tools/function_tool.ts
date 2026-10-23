@@ -8,6 +8,7 @@ import {FunctionDeclaration, Schema, Type} from '@google/genai';
 import {z as z3} from 'zod/v3';
 import {z as z4} from 'zod/v4';
 
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {isZodObject, zodObjectToSchema} from '../utils/simple_zod_to_json.js';
 
 import {Context} from '../agents/context.js';
@@ -232,7 +233,7 @@ export class FunctionTool<
   constructor(options: ToolOptions<TParameters>) {
     const name = options.name ?? (options.execute as {name?: string}).name;
     if (!name) {
-      throw new Error(
+      throw new InputValidationError(
         'Tool name cannot be empty. Either name the `execute` function or provide a `name`.',
       );
     }

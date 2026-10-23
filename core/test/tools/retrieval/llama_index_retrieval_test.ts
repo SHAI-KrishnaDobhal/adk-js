@@ -9,6 +9,7 @@ import {
   LlamaIndexNodeWithScore,
   LlamaIndexRetrieval,
   LlamaIndexRetriever,
+  ToolExecutionError,
 } from '@google/adk';
 import {describe, expect, it} from 'vitest';
 
@@ -84,6 +85,12 @@ describe('LlamaIndexRetrieval', () => {
         toolContext: TOOL_CONTEXT,
       }),
     ).rejects.toThrow('docs retrieved no results');
+    await expect(
+      tool.runAsync({
+        args: {query: 'nothing matches'},
+        toolContext: TOOL_CONTEXT,
+      }),
+    ).rejects.toThrow(ToolExecutionError);
   });
 
   it('treats a missing query argument as the empty query', async () => {

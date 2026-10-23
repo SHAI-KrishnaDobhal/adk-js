@@ -19,6 +19,7 @@ import {
   AuthScheme,
   credentialToParam,
   dictToAuthScheme,
+  InputValidationError,
   INTERNAL_AUTH_PREFIX,
   OpenIdConfig,
   openidDictToSchemeCredential,
@@ -267,6 +268,11 @@ describe('auth_helpers', () => {
         client_id: 'client_id',
       }),
     ).toThrow('Missing required fields in credential_dict: client_secret');
+    expect(() =>
+      openidDictToSchemeCredential(configDict, SCOPES, {
+        client_id: 'client_id',
+      }),
+    ).toThrow(InputValidationError);
   });
 
   describe('openidUrlToSchemeCredential', () => {

@@ -8,6 +8,7 @@ import * as yaml from 'js-yaml';
 import {OpenAPIV3} from 'openapi-types';
 import {ReadonlyContext} from '../../agents/readonly_context.js';
 import {AuthCredential} from '../../auth/auth_credential.js';
+import {InputValidationError} from '../../errors/input_validation_error.js';
 import {experimental} from '../../utils/experimental.js';
 import {logger} from '../../utils/logger.js';
 import {BaseTool} from '../base_tool.js';
@@ -45,12 +46,16 @@ export class OpenAPIToolset extends BaseToolset {
       } else if (options.specType === 'json' || !options.specType) {
         spec = JSON.parse(options.specStr) as OpenAPIV3.Document;
       } else {
-        throw new Error(`Unsupported spec type: ${options.specType}`);
+        throw new InputValidationError(
+          `Unsupported spec type: ${options.specType}`,
+        );
       }
     }
 
     if (!spec) {
-      throw new Error('Either specDict or specStr must be provided.');
+      throw new InputValidationError(
+        'Either specDict or specStr must be provided.',
+      );
     }
 
     const parser = new OpenApiSpecParser({

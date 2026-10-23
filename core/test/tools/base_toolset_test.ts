@@ -5,6 +5,7 @@
  */
 
 import {
+  AlreadyExistsError,
   BaseTool,
   BaseToolset,
   Context,
@@ -127,6 +128,9 @@ describe('BaseToolset integration with LLM Request', () => {
         await tool.processLlmRequest({toolContext: context, llmRequest});
       }
     }).rejects.toThrow('Duplicate tool name: tool1');
+    await expect(
+      tools2[0].processLlmRequest({toolContext: context, llmRequest}),
+    ).rejects.toThrow(AlreadyExistsError);
   });
 
   it('Multiple toolsets with separate prefixes and conflicting tool names do not cause an error', async () => {

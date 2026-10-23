@@ -7,6 +7,7 @@
 import {
   Context,
   FunctionTool,
+  InputValidationError,
   isBaseToolset,
   isFunctionTool,
   isLangchainTool,
@@ -43,6 +44,13 @@ describe('ToolboxToolset', () => {
           serverUrl: 'http://127.0.0.1:5000',
         }),
     ).toThrow('toolNames and toolsetName cannot both be undefined.');
+
+    expect(
+      () =>
+        new ToolboxToolset({
+          serverUrl: 'http://127.0.0.1:5000',
+        }),
+    ).toThrow(InputValidationError);
 
     expect(
       () =>

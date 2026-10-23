@@ -6,6 +6,7 @@
 
 import {GenerateContentConfig, Tool} from '@google/genai';
 import {ReadonlyContext} from '../agents/readonly_context.js';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {logger} from '../utils/logger.js';
 import {
   isGemini1Model,
@@ -75,13 +76,13 @@ export class VertexAiSearchTool extends BuiltInTool {
       (dataStoreId === undefined && searchEngineId === undefined) ||
       (dataStoreId !== undefined && searchEngineId !== undefined)
     ) {
-      throw new Error(
+      throw new InputValidationError(
         'Either dataStoreId or searchEngineId must be specified.',
       );
     }
 
     if (dataStoreSpecs !== undefined && searchEngineId === undefined) {
-      throw new Error(
+      throw new InputValidationError(
         'searchEngineId must be specified if dataStoreSpecs is specified.',
       );
     }

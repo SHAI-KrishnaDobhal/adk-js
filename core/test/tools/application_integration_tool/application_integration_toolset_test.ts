@@ -17,6 +17,7 @@ import {
   Context,
   createSession,
   getActionOperation,
+  InputValidationError,
   IntegrationClient,
   IntegrationConnectorTool,
   InvocationContext,
@@ -587,6 +588,9 @@ describe('ApplicationIntegrationToolset', () => {
       await expect(
         integrationToolset({serviceAccountJson: '[]'}).getTools(),
       ).rejects.toThrow('serviceAccountJson must hold a JSON object.');
+      await expect(
+        integrationToolset({serviceAccountJson: '[]'}).getTools(),
+      ).rejects.toThrow(InputValidationError);
     });
   });
 

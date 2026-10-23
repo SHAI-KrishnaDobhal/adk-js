@@ -8,6 +8,7 @@ import {Client} from '@google-cloud/vertexai';
 import {
   Context,
   GCPSkillRegistry,
+  InputValidationError,
   InvocationContext,
   LlmRequest,
   LoadSkillResourceTool,
@@ -230,6 +231,7 @@ Instruction body`;
       expect(() => new SearchSkillsTool(toolset)).toThrow(
         'SearchSkillsTool requires a configured skill registry.',
       );
+      expect(() => new SearchSkillsTool(toolset)).toThrow(InputValidationError);
     });
 
     it('returns declaration with search_skills', () => {

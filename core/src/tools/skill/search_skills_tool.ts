@@ -5,6 +5,7 @@
  */
 
 import {FunctionDeclaration, Type} from '@google/genai';
+import {InputValidationError} from '../../errors/input_validation_error.js';
 import {experimental} from '../../utils/experimental.js';
 import {logger} from '../../utils/logger.js';
 import {BaseTool, RunAsyncToolRequest} from '../base_tool.js';
@@ -14,7 +15,9 @@ import {SkillToolset} from './skill_toolset.js';
 export class SearchSkillsTool extends BaseTool {
   constructor(private toolset: SkillToolset) {
     if (!toolset.registry) {
-      throw new Error('SearchSkillsTool requires a configured skill registry.');
+      throw new InputValidationError(
+        'SearchSkillsTool requires a configured skill registry.',
+      );
     }
     super({
       name: 'search_skills',

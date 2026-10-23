@@ -6,6 +6,7 @@
 
 import {
   AuthCredentialTypes,
+  InputValidationError,
   OpenApiSpecParser,
   OpenAPIToolset,
   ReadonlyContext,
@@ -271,6 +272,9 @@ describe('OpenAPIToolset spec type', () => {
       // The cast is how a typed test stands in for that caller.
       new OpenAPIToolset({specStr: '{}', specType: 'xml' as 'json'});
     }).toThrow('Unsupported spec type: xml');
+    expect(
+      () => new OpenAPIToolset({specStr: '{}', specType: 'xml' as 'json'}),
+    ).toThrow(InputValidationError);
   });
 
   it('should accept json and yaml', () => {

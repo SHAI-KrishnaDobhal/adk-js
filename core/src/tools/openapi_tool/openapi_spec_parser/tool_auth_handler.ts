@@ -17,6 +17,7 @@ import {
   BaseCredentialExchanger,
   ExchangeResult,
 } from '../../../auth/exchanger/base_credential_exchanger.js';
+import {InputValidationError} from '../../../errors/input_validation_error.js';
 import {experimental} from '../../../utils/experimental.js';
 import {stableHash} from '../../../utils/hash_utils.js';
 import {logger} from '../../../utils/logger.js';
@@ -282,7 +283,7 @@ export class ToolAuthHandler {
    * Asks the client for a credential, after checking that an interactive
    * scheme has the OAuth2 client configuration it cannot proceed without.
    *
-   * @throws Error if an `oauth2` or `openIdConnect` scheme has no OAuth2
+   * @throws InputValidationError if an `oauth2` or `openIdConnect` scheme has no OAuth2
    *     credential.
    * @throws AuthCredentialMissingError if that credential omits `clientId` or
    *     `clientSecret`.
@@ -292,7 +293,7 @@ export class ToolAuthHandler {
     if (schemeType === 'oauth2' || schemeType === 'openIdConnect') {
       const oauth2 = this.authCredential?.oauth2;
       if (!oauth2) {
-        throw new Error(
+        throw new InputValidationError(
           `authCredential is empty for scheme ${schemeType}. ` +
             'Please create AuthCredential using OAuth2Auth.',
         );

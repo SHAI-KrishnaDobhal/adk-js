@@ -5,7 +5,7 @@
  */
 
 import {SecretManagerServiceClient} from '@google-cloud/secret-manager';
-import {SecretManagerClient} from '@google/adk';
+import {InputValidationError, SecretManagerClient} from '@google/adk';
 import {GoogleAuth, OAuth2Client} from 'google-auth-library';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
@@ -112,6 +112,9 @@ describe('SecretManagerClient', () => {
     expect(
       () => new SecretManagerClient({serviceAccountJson: '{not json'}),
     ).toThrow('Invalid service account JSON:');
+    expect(
+      () => new SecretManagerClient({serviceAccountJson: '{not json'}),
+    ).toThrow(InputValidationError);
   });
 
   it('requests the named version and decodes a byte payload as UTF-8', async () => {

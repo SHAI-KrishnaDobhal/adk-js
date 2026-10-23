@@ -5,6 +5,7 @@
  */
 
 import {GoogleAuth, JWTInput} from 'google-auth-library';
+import {InputValidationError} from '../../../errors/input_validation_error.js';
 import {getErrorMessage} from '../../../utils/error_utils.js';
 
 /** OAuth scope every Integration Connectors and Application Integration call needs. */
@@ -90,8 +91,8 @@ export interface SendCloudRequestOptions {
  * parsed response body.
  *
  * @param options The request URL, method, body, token source, and 400/404 message.
- * @throws Error `invalidRequestMessage` for HTTP 400 and 404,
- *   `Request error: …` for any other non-2xx status or a failed fetch, and
+ * @throws InputValidationError `invalidRequestMessage` for HTTP 400 and 404.
+ * @throws Error `Request error: …` for any other non-2xx status or a failed fetch, and
  *   `An unexpected error occurred: …` for anything else, such as a missing
  *   credential or a body that is not JSON.
  */
@@ -121,7 +122,7 @@ export async function sendCloudRequest(
   }
 
   if (response.status === 400 || response.status === 404) {
-    throw new Error(invalidRequestMessage);
+    throw new InputValidationError(invalidRequestMessage);
   }
   if (!response.ok) {
     throw new Error(

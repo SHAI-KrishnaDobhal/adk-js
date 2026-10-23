@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {LangchainTool, LangchainToolLike} from './langchain_tool.js';
 
 /**
@@ -63,7 +64,7 @@ export function isToolboxTool(obj: unknown): obj is ToolboxTool {
 function createUnconfiguredToolboxClient(url?: string): ToolboxClientLike {
   const endpoint = url ?? 'unspecified URL';
   const throwMissingClient = (): never => {
-    throw new Error(
+    throw new InputValidationError(
       `ToolboxTool requires a ToolboxClientLike instance (for endpoint "${endpoint}"). Pass {url, client} to the ToolboxTool constructor.`,
     );
   };
@@ -112,7 +113,7 @@ export class ToolboxTool {
       this.toolboxClient.loadTool?.bind(this.toolboxClient) ??
       this.toolboxClient.load_tool?.bind(this.toolboxClient);
     if (!loader) {
-      throw new Error(
+      throw new InputValidationError(
         'ToolboxClient does not implement loadTool or load_tool.',
       );
     }
@@ -129,7 +130,7 @@ export class ToolboxTool {
       this.toolboxClient.loadToolset?.bind(this.toolboxClient) ??
       this.toolboxClient.load_toolset?.bind(this.toolboxClient);
     if (!loader) {
-      throw new Error(
+      throw new InputValidationError(
         'ToolboxClient does not implement loadToolset or load_toolset.',
       );
     }

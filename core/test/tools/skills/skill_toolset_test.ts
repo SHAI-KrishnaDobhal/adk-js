@@ -5,6 +5,7 @@
  */
 
 import {
+  AlreadyExistsError,
   BaseTool,
   BaseToolset,
   Context,
@@ -200,6 +201,9 @@ describe('skill_toolset', () => {
 
       await expect(toolset.getTools(context)).rejects.toThrow(
         'Duplicate tool name: duplicate_tool',
+      );
+      await expect(toolset.getTools(context)).rejects.toThrow(
+        AlreadyExistsError,
       );
     });
 

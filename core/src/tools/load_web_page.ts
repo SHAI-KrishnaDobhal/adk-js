@@ -7,6 +7,10 @@
 import {z} from 'zod';
 
 import {
+  ToolErrorType,
+  ToolExecutionError,
+} from '../errors/tool_execution_error.js';
+import {
   isHttpUrl,
   isLocalhostHostname,
   isNonGlobalAddress,
@@ -39,10 +43,16 @@ function failedToFetchMessage(url: string): string {
 function assertUrlAllowed(url: string): URL {
   const parsed = new URL(url);
   if (!isHttpUrl(parsed)) {
-    throw new Error(`Unsupported url scheme: ${url}`);
+    throw new ToolExecutionError(
+      `Unsupported url scheme: ${url}`,
+      ToolErrorType.BAD_REQUEST,
+    );
   }
   if (isLocalhostHostname(parsed.hostname)) {
-    throw new Error(`Blocked host: ${parsed.hostname}`);
+    throw new ToolExecutionError(
+      `Blocked host: ${parsed.hostname}`,
+      ToolErrorType.FORBIDDEN,
+    );
   }
   return parsed;
 }
@@ -51,7 +61,10 @@ function assertUrlAllowed(url: string): URL {
 async function validateResolvedAddresses(hostname: string): Promise<void> {
   const addresses = await resolveHostAddresses(hostname);
   if (addresses.some(isNonGlobalAddress)) {
-    throw new Error(`Blocked host: ${hostname}`);
+    throw new ToolExecutionError(
+      `Blocked host: ${hostname}`,
+      ToolErrorType.FORBIDDEN,
+    );
   }
 }
 

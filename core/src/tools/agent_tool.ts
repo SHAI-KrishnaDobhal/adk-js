@@ -8,6 +8,10 @@ import {Content, FunctionDeclaration, Type} from '@google/genai';
 
 import {BaseAgent} from '../agents/base_agent.js';
 import {isLlmAgent} from '../agents/llm_agent.js';
+import {
+  ToolErrorType,
+  ToolExecutionError,
+} from '../errors/tool_execution_error.js';
 import {Event} from '../events/event.js';
 import {InMemoryMemoryService} from '../memory/in_memory_memory_service.js';
 import {Runner} from '../runner/runner.js';
@@ -49,7 +53,10 @@ function validateAndStripAgentInput(
   args: Record<string, unknown>,
 ): Record<string, unknown> {
   if (typeof args !== 'object' || args === null || Array.isArray(args)) {
-    throw new Error('AgentTool input args must be a plain object.');
+    throw new ToolExecutionError(
+      'AgentTool input args must be a plain object.',
+      ToolErrorType.BAD_REQUEST,
+    );
   }
   const schema = isZodSchema(agent.inputSchema)
     ? agent.inputSchema

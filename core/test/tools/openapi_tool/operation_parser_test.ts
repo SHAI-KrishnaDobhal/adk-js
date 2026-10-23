@@ -4,7 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {OperationParser, type ApiParameter} from '@google/adk';
+import {
+  InputValidationError,
+  OperationParser,
+  type ApiParameter,
+} from '@google/adk';
 import {OpenAPIV3} from 'openapi-types';
 import {describe, expect, it} from 'vitest';
 
@@ -15,6 +19,7 @@ describe('OperationParser', () => {
     };
     const parser = new OperationParser(op);
     expect(() => parser.getFunctionName()).toThrow('Operation ID is missing');
+    expect(() => parser.getFunctionName()).toThrow(InputValidationError);
   });
 
   it('should parse array request body', () => {

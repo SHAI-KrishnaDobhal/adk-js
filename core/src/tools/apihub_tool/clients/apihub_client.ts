@@ -5,6 +5,8 @@
  */
 
 import {GoogleAuth} from 'google-auth-library';
+import {InputValidationError} from '../../../errors/input_validation_error.js';
+import {NotFoundError} from '../../../errors/not_found_error.js';
 import {parseServiceAccountJson} from './service_account.js';
 
 /** Root of the API Hub REST API that every request is made against. */
@@ -121,7 +123,7 @@ export class APIHubClient implements BaseAPIHubClient {
       const api = await this.getApi(names.apiResourceName);
       const versions = api.versions ?? [];
       if (versions.length === 0) {
-        throw new Error(
+        throw new NotFoundError(
           `No versions found in API Hub resource: ${names.apiResourceName}`,
         );
       }
@@ -132,7 +134,7 @@ export class APIHubClient implements BaseAPIHubClient {
       const apiVersion = await this.getApiVersion(apiVersionResourceName);
       const specs = apiVersion.specs ?? [];
       if (specs.length === 0) {
-        throw new Error(
+        throw new NotFoundError(
           `No specs found in API Hub version: ${apiVersionResourceName}`,
         );
       }
@@ -143,7 +145,9 @@ export class APIHubClient implements BaseAPIHubClient {
       return this.fetchSpec(apiSpecResourceName);
     }
 
-    throw new Error(`No API Hub resource found in path: ${path}`);
+    throw new InputValidationError(
+      `No API Hub resource found in path: ${path}`,
+    );
   }
 
   /**
@@ -335,7 +339,7 @@ export function extractResourceName(urlOrPath: string): APIHubResourceNames {
     ? segmentAfter(segments, 'projects')
     : (query.get('project') ?? undefined);
   if (!project) {
-    throw new Error(
+    throw new InputValidationError(
       `Project ID not found in URL or path in APIHubClient. Input path is ` +
         `'${urlOrPath}'. Please make sure there is either ` +
         `'/projects/PROJECT_ID' in the path or 'project=PROJECT_ID' query ` +
@@ -345,7 +349,7 @@ export function extractResourceName(urlOrPath: string): APIHubResourceNames {
 
   const location = segmentAfter(segments, 'locations');
   if (!location) {
-    throw new Error(
+    throw new InputValidationError(
       `Location not found in URL or path in APIHubClient. Input path is ` +
         `'${urlOrPath}'. Please make sure there is either ` +
         `'/location/LOCATION_ID' in the path.`,
@@ -354,7 +358,7 @@ export function extractResourceName(urlOrPath: string): APIHubResourceNames {
 
   const apiId = segmentAfter(segments, 'apis');
   if (!apiId) {
-    throw new Error(
+    throw new InputValidationError(
       `API id not found in URL or path in APIHubClient. Input path is ` +
         `'${urlOrPath}'. Please make sure there is either ` +
         `'/apis/API_ID' in the path.`,

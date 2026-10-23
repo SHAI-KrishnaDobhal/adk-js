@@ -6,6 +6,7 @@
 
 import {FunctionDeclaration, Tool} from '@google/genai';
 
+import {AlreadyExistsError} from '../errors/already_exists_error.js';
 import {LlmRequest} from '../models/llm_request.js';
 import {getGoogleLlmVariant} from '../utils/variant_utils.js';
 
@@ -171,7 +172,7 @@ export abstract class BaseTool {
       ? llmRequest.toolsDict[this.name]
       : undefined;
     if (registered && !isInModelTool(registered)) {
-      throw new Error(`Duplicate tool name: ${this.name}`);
+      throw new AlreadyExistsError(`Duplicate tool name: ${this.name}`);
     }
 
     llmRequest.toolsDict[this.name] = this;

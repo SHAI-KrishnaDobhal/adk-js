@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {InputValidationError} from '../../../errors/input_validation_error.js';
 import {experimental} from '../../../utils/experimental.js';
 import {isJsonObject, JsonObject} from '../../../utils/json_utils.js';
 import {
@@ -162,7 +163,7 @@ export class IntegrationClient {
    *
    * @param toolName Prefix of every generated `operationId`.
    * @param toolInstructions Text appended to every operation description.
-   * @throws Error When neither entity operations nor actions are configured,
+   * @throws InputValidationError When neither entity operations nor actions are configured,
    *   or an operation is not one of create, update, delete, list or get.
    */
   async getOpenApiSpecForConnection(
@@ -173,7 +174,7 @@ export class IntegrationClient {
       Object.keys(this.entityOperations).length === 0 &&
       this.actions.length === 0
     ) {
-      throw new Error(
+      throw new InputValidationError(
         'No entity operations or actions provided. Please provide at least one of them.',
       );
     }
@@ -249,7 +250,7 @@ export class IntegrationClient {
             schemas[`get_${entity}_Request`] = getOperationRequest();
             break;
           default:
-            throw new Error(
+            throw new InputValidationError(
               `Invalid operation: ${operation} for entity: ${entity}`,
             );
         }

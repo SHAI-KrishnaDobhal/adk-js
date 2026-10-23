@@ -15,6 +15,7 @@ import {
   CredentialExchangeError,
   ExchangeResult,
   InMemorySessionService,
+  InputValidationError,
   InvocationContext,
   isAuthCredential,
   LlmAgent,
@@ -369,6 +370,9 @@ describe('ToolAuthHandler OAuth2 and OIDC validation', () => {
     await expect(
       new ToolAuthHandler(context, OAUTH2_SCHEME).prepareAuthCredentials(),
     ).rejects.toThrow('authCredential is empty for scheme oauth2');
+    await expect(
+      new ToolAuthHandler(context, OAUTH2_SCHEME).prepareAuthCredentials(),
+    ).rejects.toThrow(InputValidationError);
     expect(requestCredential).not.toHaveBeenCalled();
   });
 

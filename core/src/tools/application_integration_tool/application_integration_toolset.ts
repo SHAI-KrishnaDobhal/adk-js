@@ -11,6 +11,7 @@ import {
   AuthCredentialTypes,
 } from '../../auth/auth_credential.js';
 import {AuthScheme} from '../../auth/auth_schemes.js';
+import {InputValidationError} from '../../errors/input_validation_error.js';
 import {experimental} from '../../utils/experimental.js';
 import {
   isJsonObject,
@@ -138,7 +139,7 @@ export class ApplicationIntegrationToolset extends BaseToolset {
   private openApiToolsets: OpenAPIToolset[] = [];
 
   /**
-   * @throws Error Unless the options name either an integration and a trigger,
+   * @throws InputValidationError Unless the options name either an integration and a trigger,
    *   or a connection with at least one entity operation or action.
    */
   constructor(options: ApplicationIntegrationToolsetOptions) {
@@ -153,7 +154,7 @@ export class ApplicationIntegrationToolset extends BaseToolset {
         (options.actions ?? []).length > 0),
     );
     if (!hasIntegration && !hasConnection) {
-      throw new Error(
+      throw new InputValidationError(
         'Either (integration and trigger) or (connection and (entityOperations or actions)) should be provided.',
       );
     }
@@ -355,7 +356,9 @@ function buildAuthCredential(serviceAccountJson?: string): AuthCredential {
   }
   const key: unknown = JSON.parse(serviceAccountJson);
   if (!isJsonObject(key)) {
-    throw new Error('serviceAccountJson must hold a JSON object.');
+    throw new InputValidationError(
+      'serviceAccountJson must hold a JSON object.',
+    );
   }
   const [, authCredential] = serviceAccountDictToSchemeCredential(key, [
     CLOUD_PLATFORM_SCOPE,

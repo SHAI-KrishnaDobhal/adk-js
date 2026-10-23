@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {APIHubClient} from '@google/adk';
+import {APIHubClient, NotFoundError} from '@google/adk';
 import {GoogleAuth} from 'google-auth-library';
 import {afterEach, beforeEach, describe, expect, it, Mock, vi} from 'vitest';
 import {extractResourceName} from '../../../../src/tools/apihub_tool/clients/apihub_client.js';
@@ -210,6 +210,9 @@ describe('APIHubClient', () => {
 
       await expect(client.getSpecContent(API_NAME)).rejects.toThrow(
         `No versions found in API Hub resource: ${API_NAME}`,
+      );
+      await expect(client.getSpecContent(API_NAME)).rejects.toThrow(
+        NotFoundError,
       );
     });
 

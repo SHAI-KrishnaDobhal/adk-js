@@ -4,7 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {OpenApiSpecParser, ParsedOperation} from '@google/adk';
+import {
+  InputValidationError,
+  OpenApiSpecParser,
+  ParsedOperation,
+} from '@google/adk';
 import {OpenAPIV3} from 'openapi-types';
 import {describe, expect, it} from 'vitest';
 
@@ -331,6 +335,14 @@ describe('OpenApiSpecParser', () => {
         "Unresolved server URL variable 'tld' in 'https://{region}.api.{tld}'. " +
           'Declare a default under servers[].variables.',
       );
+      expect(() =>
+        parseBaseUrl([
+          {
+            url: 'https://{region}.api.{tld}',
+            variables: {region: {default: 'us'}},
+          },
+        ]),
+      ).toThrow(InputValidationError);
     });
 
     it('should default the base URL to an empty string when the spec has no servers', () => {

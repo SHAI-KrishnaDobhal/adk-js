@@ -10,6 +10,7 @@ import * as path from 'node:path';
 import {Context} from '../../agents/context.js';
 import {ReadonlyContext} from '../../agents/readonly_context.js';
 import {BaseCodeExecutor} from '../../code_executors/base_code_executor.js';
+import {AlreadyExistsError} from '../../errors/already_exists_error.js';
 import {appendInstructions, LlmRequest} from '../../models/llm_request.js';
 import {formatSkillsAsXml} from '../../skills/prompt.js';
 import {Skill} from '../../skills/skill.js';
@@ -239,7 +240,9 @@ export class SkillToolset extends BaseToolset {
     for (const toolUnion of this.additionalTools) {
       if (toolUnion instanceof BaseTool) {
         if (candidateTools[toolUnion.name]) {
-          throw new Error(`Duplicate tool name: ${toolUnion.name}`);
+          throw new AlreadyExistsError(
+            `Duplicate tool name: ${toolUnion.name}`,
+          );
         }
 
         candidateTools[toolUnion.name] = toolUnion;
@@ -248,7 +251,7 @@ export class SkillToolset extends BaseToolset {
 
         for (const t of tsTools) {
           if (candidateTools[t.name]) {
-            throw new Error(`Duplicate tool name: ${t.name}`);
+            throw new AlreadyExistsError(`Duplicate tool name: ${t.name}`);
           }
 
           candidateTools[t.name] = t;

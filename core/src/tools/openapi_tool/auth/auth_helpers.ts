@@ -16,6 +16,7 @@ import {
   AuthScheme,
   OpenIdConnectWithConfig,
 } from '../../../auth/auth_schemes.js';
+import {InputValidationError} from '../../../errors/input_validation_error.js';
 import {camelCaseKeys} from '../../../utils/case_utils.js';
 import {ApiParameter} from '../openapi_spec_parser/operation_parser.js';
 
@@ -189,7 +190,7 @@ export function applyCredential(
     } else if (httpCredentials?.username || httpCredentials?.password) {
       throw new Error('Basic Authentication is not supported.');
     } else {
-      throw new Error('Invalid HTTP auth credentials');
+      throw new InputValidationError('Invalid HTTP auth credentials');
     }
   }
 
@@ -282,7 +283,9 @@ export function tokenToSchemeCredential(
 ): [AuthScheme, AuthCredential | undefined] {
   if (tokenType === 'apikey') {
     if (!isApiKeyLocation(location)) {
-      throw new Error(`Invalid location for apiKey: ${location}`);
+      throw new InputValidationError(
+        `Invalid location for apiKey: ${location}`,
+      );
     }
     const authScheme: OpenAPIV3.ApiKeySecurityScheme = {
       type: 'apiKey',
@@ -365,7 +368,7 @@ export function serviceAccountSchemeCredential(
  *   snake_case, because it is an on-disk wire format. A `{web: {…}}` or
  *   `{installed: {…}}` wrapper is unwrapped.
  * @returns A `[scheme, credential]` pair.
- * @throws Error When the configuration or the client secret is incomplete.
+ * @throws InputValidationError When the configuration or the client secret is incomplete.
  */
 export function openidDictToSchemeCredential(
   configDict: Record<string, unknown>,
@@ -376,7 +379,7 @@ export function openidDictToSchemeCredential(
     camelCaseKeys(configDict),
   );
   if (!parsedConfig.success) {
-    throw new Error(
+    throw new InputValidationError(
       `Invalid OpenID Connect configuration: ${z.prettifyError(parsedConfig.error)}`,
     );
   }
@@ -398,7 +401,7 @@ export function openidDictToSchemeCredential(
     (field) => !(field in credentialDict),
   );
   if (missingFields.length > 0) {
-    throw new Error(
+    throw new InputValidationError(
       `Missing required fields in credential_dict: ${missingFields.join(', ')}`,
     );
   }
@@ -491,7 +494,9 @@ export function credentialToParam(
 
   if (authScheme.type === 'apiKey' && authCredential.apiKey) {
     if (!isApiKeyLocation(authScheme.in)) {
-      throw new Error(`Invalid API Key location: ${authScheme.in}`);
+      throw new InputValidationError(
+        `Invalid API Key location: ${authScheme.in}`,
+      );
     }
     const paramName = authScheme.name || '';
     const param: ApiParameter = {
@@ -513,7 +518,7 @@ export function credentialToParam(
     if (credentials?.username || credentials?.password) {
       throw new Error('Basic Authentication is not supported.');
     }
-    throw new Error('Invalid HTTP auth credentials');
+    throw new InputValidationError('Invalid HTTP auth credentials');
   }
 
   if (authScheme.type === 'oauth2' || authScheme.type === 'openIdConnect') {
@@ -521,7 +526,9 @@ export function credentialToParam(
     return token ? bearerTokenParam(authScheme, token) : [undefined, undefined];
   }
 
-  throw new Error('Invalid security scheme and credential combination');
+  throw new InputValidationError(
+    'Invalid security scheme and credential combination',
+  );
 }
 
 /** Validates `data` against `schema`, reporting failures the same way. */
@@ -531,7 +538,7 @@ function parseSecurityScheme<S extends z.ZodType>(
 ): z.infer<S> {
   const result = schema.safeParse(data);
   if (!result.success) {
-    throw new Error(
+    throw new InputValidationError(
       `Invalid security scheme data: ${z.prettifyError(result.error)}`,
     );
   }
@@ -551,12 +558,14 @@ function parseSecurityScheme<S extends z.ZodType>(
  *
  * @param data The security scheme object.
  * @returns The validated auth scheme.
- * @throws Error When `type` is missing or unrecognised, or the rest of the
+ * @throws InputValidationError When `type` is missing or unrecognised, or the rest of the
  *   object does not match the shape that type requires.
  */
 export function dictToAuthScheme(data: Record<string, unknown>): AuthScheme {
   if (!('type' in data)) {
-    throw new Error("Missing 'type' field in security scheme dictionary.");
+    throw new InputValidationError(
+      "Missing 'type' field in security scheme dictionary.",
+    );
   }
 
   const securityType = data['type'];
@@ -570,6 +579,8 @@ export function dictToAuthScheme(data: Record<string, unknown>): AuthScheme {
     case 'openIdConnect':
       return parseSecurityScheme(OpenIdConnectSchemeSchema, data);
     default:
-      throw new Error(`Invalid security scheme type: ${securityType}`);
+      throw new InputValidationError(
+        `Invalid security scheme type: ${securityType}`,
+      );
   }
 }

@@ -7,6 +7,7 @@
 import {
   Context,
   FunctionTool,
+  InputValidationError,
   isLangchainTool,
   LangchainTool,
   LangchainToolLike,
@@ -167,6 +168,7 @@ describe('LangchainTool', () => {
     }
 
     expect(caughtError).toBeInstanceOf(Error);
+    expect(caughtError).toBeInstanceOf(InputValidationError);
     expect(caughtError?.message).toBe(
       'Failed to build function declaration for Langchain tool: broken modelJsonSchema',
     );

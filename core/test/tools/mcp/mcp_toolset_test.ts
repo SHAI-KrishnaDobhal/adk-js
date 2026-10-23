@@ -9,6 +9,7 @@ import {Client} from '@modelcontextprotocol/sdk/client/index.js';
 import {SSEClientTransport} from '@modelcontextprotocol/sdk/client/sse.js';
 import {describe, expect, it, vi} from 'vitest';
 import {ReadonlyContext} from '../../../src/agents/readonly_context.js';
+import {NotFoundError} from '../../../src/errors/not_found_error.js';
 import {isBaseToolset} from '../../../src/tools/base_toolset.js';
 import {MCPConnectionParams} from '../../../src/tools/mcp/mcp_session_manager.js';
 import {MCPToolset} from '../../../src/tools/mcp/mcp_toolset.js';
@@ -211,6 +212,9 @@ describe('MCPToolset', () => {
 
       await expect(toolset.getResourceInfo('nope')).rejects.toThrow(
         "Resource with name 'nope' not found.",
+      );
+      await expect(toolset.getResourceInfo('nope')).rejects.toThrow(
+        NotFoundError,
       );
     });
 

@@ -7,6 +7,7 @@
 import {GenerateContentConfig} from '@google/genai';
 import {afterEach, describe, expect, it} from 'vitest';
 import {Context} from '../../src/agents/context.js';
+import {InputValidationError} from '../../src/errors/input_validation_error.js';
 import {LlmRequest} from '../../src/models/llm_request.js';
 import {
   VertexAiSearchTool,
@@ -54,6 +55,9 @@ describe('VertexAiSearchTool', () => {
   it('should throw error if neither dataStoreId nor searchEngineId is specified', () => {
     expect(() => new VertexAiSearchTool(invalidParams({}))).toThrowError(
       'Either dataStoreId or searchEngineId must be specified.',
+    );
+    expect(() => new VertexAiSearchTool(invalidParams({}))).toThrow(
+      InputValidationError,
     );
   });
 

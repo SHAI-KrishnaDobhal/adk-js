@@ -12,6 +12,7 @@ import {
   createRestApiTool,
   createRestApiToolFromJson,
   createSession,
+  InputValidationError,
   InvocationContext,
   LlmAgent,
   OpenApiSpecParser,
@@ -19,6 +20,7 @@ import {
   PluginManager,
   RestApiTool,
   ToolAuthHandler,
+  ToolExecutionError,
 } from '@google/adk';
 import {Type} from '@google/genai';
 import {OpenAPIV3} from 'openapi-types';
@@ -989,6 +991,11 @@ describe('RestApiTool Utilities', () => {
             user_id: '..',
           }),
         ).toThrow(/relative path segments/);
+        expect(() =>
+          prepareRequestParams(usersEndpoint, userIdParameters, {
+            user_id: '..',
+          }),
+        ).toThrow(ToolExecutionError);
       });
 
       it('should reject a single-dot path parameter value', () => {
@@ -1596,6 +1603,9 @@ describe('RestApiTool v0.1.0 parity behaviour', () => {
     expect(() => createRestApiToolFromJson(serialize({type: 'magic'}))).toThrow(
       'Unsupported security scheme type: "magic". Expected one of: ' +
         'apiKey, http, oauth2, openIdConnect.',
+    );
+    expect(() => createRestApiToolFromJson(serialize({type: 'magic'}))).toThrow(
+      InputValidationError,
     );
     expect(() => createRestApiToolFromJson(serialize({}))).toThrow(
       'Unsupported security scheme type: undefined.',

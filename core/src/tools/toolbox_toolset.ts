@@ -5,6 +5,7 @@
  */
 
 import {ReadonlyContext} from '../agents/readonly_context.js';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {BaseTool, isBaseTool} from './base_tool.js';
 import {BaseToolset, ToolPredicate} from './base_toolset.js';
 import {
@@ -190,7 +191,7 @@ function createUnconfiguredToolboxToolsetClient(
   serverUrl: string,
 ): ToolboxToolsetClientLike {
   const throwMissingClient = (): never => {
-    throw new Error(
+    throw new InputValidationError(
       `ToolboxToolset requires a ToolboxToolsetClientLike instance (for endpoint "${serverUrl}"). Pass {serverUrl, client} to the ToolboxToolset constructor.`,
     );
   };
@@ -319,7 +320,9 @@ export class ToolboxToolset extends BaseToolset {
       (!options.toolNames || options.toolNames.length === 0) &&
       !options.toolsetName
     ) {
-      throw new Error('toolNames and toolsetName cannot both be undefined.');
+      throw new InputValidationError(
+        'toolNames and toolsetName cannot both be undefined.',
+      );
     }
 
     super(options.toolFilter ?? [], options.prefix);
@@ -348,7 +351,7 @@ export class ToolboxToolset extends BaseToolset {
         this.toolboxClient.loadToolset?.bind(this.toolboxClient) ??
         this.toolboxClient.load_toolset?.bind(this.toolboxClient);
       if (!loader) {
-        throw new Error(
+        throw new InputValidationError(
           'ToolboxClient does not implement loadToolset or load_toolset.',
         );
       }
@@ -363,7 +366,7 @@ export class ToolboxToolset extends BaseToolset {
         this.toolboxClient.loadTool?.bind(this.toolboxClient) ??
         this.toolboxClient.load_tool?.bind(this.toolboxClient);
       if (!loader) {
-        throw new Error(
+        throw new InputValidationError(
           'ToolboxClient does not implement loadTool or load_tool.',
         );
       }

@@ -16,6 +16,7 @@ import {
   getActionOperation,
   getOperation,
   getOperationRequest,
+  InputValidationError,
   IntegrationClient,
   listOperation,
   listOperationRequest,
@@ -325,6 +326,9 @@ describe('IntegrationClient', () => {
       await expect(
         connectionClient({}, []).getOpenApiSpecForConnection(),
       ).rejects.toThrow('No entity operations or actions provided.');
+      await expect(
+        connectionClient().getOpenApiSpecForConnection(),
+      ).rejects.toThrow(InputValidationError);
       expect(fetchMock).not.toHaveBeenCalled();
     });
 
