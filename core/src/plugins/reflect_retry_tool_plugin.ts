@@ -5,6 +5,7 @@
  */
 
 import {Context} from '../agents/context.js';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {BaseTool} from '../tools/base_tool.js';
 import {
   REFLECT_AND_RETRY_RESPONSE_TYPE,
@@ -99,7 +100,9 @@ export class ReflectAndRetryToolPlugin extends BasePlugin {
 
     const retries = options.maxRetries ?? 3;
     if (retries < 0) {
-      throw new Error('maxRetries must be a non-negative integer.');
+      throw new InputValidationError(
+        'maxRetries must be a non-negative integer.',
+      );
     }
 
     this.maxRetries = retries;

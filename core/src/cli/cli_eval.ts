@@ -18,6 +18,8 @@ import {
 } from '../agents/llm_agent.js';
 import {BaseArtifactService} from '../artifacts/base_artifact_service.js';
 import {InMemoryArtifactService} from '../artifacts/in_memory_artifact_service.js';
+import {InputValidationError} from '../errors/input_validation_error.js';
+import {NotFoundError} from '../errors/not_found_error.js';
 import {Runner} from '../runner/runner.js';
 import {BaseSessionService} from '../sessions/base_session_service.js';
 import {InMemorySessionService} from '../sessions/in_memory_session_service.js';
@@ -202,7 +204,7 @@ export function getEvaluationCriteriaOrDefault(
     ) {
       return (configData as {criteria: Record<string, number>}).criteria;
     }
-    throw new Error(
+    throw new InputValidationError(
       `Invalid format for test_config.json at ${evalConfigFilePath}. Expected a 'criteria' dictionary.`,
     );
   }
@@ -253,7 +255,7 @@ export async function getRootAgent(
     return candidate;
   }
 
-  throw new Error(
+  throw new NotFoundError(
     `No rootAgent found in module ${agentModuleFilePath}. Export a BaseAgent as 'rootAgent'.`,
   );
 }
@@ -699,7 +701,9 @@ export async function* runEvals(
       EvalEntry[] | string[]
     >;
     if (!rootAgentArg) {
-      throw new Error('rootAgent is required to run evaluations.');
+      throw new InputValidationError(
+        'rootAgent is required to run evaluations.',
+      );
     }
     rootAgent = rootAgentArg;
     resetFunc = resetFuncArg;

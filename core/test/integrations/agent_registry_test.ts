@@ -14,6 +14,7 @@ import {
   cleanName,
   GCP_MCP_SERVER_DESTINATION_ID,
   isGoogleApi,
+  NotFoundError,
   ProtocolType,
   ReadonlyContext,
   RemoteA2AAgent,
@@ -334,6 +335,9 @@ describe('AgentRegistry', () => {
       await expect(
         registry.getMcpToolset('mcpServers/invalid'),
       ).rejects.toThrow('MCP Server endpoint URI not found');
+      await expect(
+        registry.getMcpToolset('mcpServers/invalid'),
+      ).rejects.toThrow(NotFoundError);
     });
 
     it('should resolve auth scheme from bindings if available', async () => {

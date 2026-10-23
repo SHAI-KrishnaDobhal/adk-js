@@ -9,6 +9,7 @@ import {Content} from '@google/genai';
 import {BaseAgent} from '../agents/base_agent.js';
 import {Context} from '../agents/context.js';
 import {InvocationContext} from '../agents/invocation_context.js';
+import {AlreadyExistsError} from '../errors/already_exists_error.js';
 import {Event} from '../events/event.js';
 import {LlmRequest} from '../models/llm_request.js';
 import {LlmResponse} from '../models/llm_response.js';
@@ -59,16 +60,20 @@ export class PluginManager {
    * Registers a new plugin.
    *
    * @param plugin The plugin instance to register.
-   * @throws If the same exact plugin or a plugin with the same name is already
-   *     registered.
+   * @throws {AlreadyExistsError} If the same exact plugin or a plugin with the
+   *     same name is already registered.
    */
   registerPlugin(plugin: BasePlugin): void {
     // Short circuit for duplicate objects or duplicate names
     if (this.plugins.has(plugin)) {
-      throw new Error(`Plugin '${plugin.name}' already registered.`);
+      throw new AlreadyExistsError(
+        `Plugin '${plugin.name}' already registered.`,
+      );
     }
     if (Array.from(this.plugins).some((p) => p.name === plugin.name)) {
-      throw new Error(`Plugin with name '${plugin.name}' already registered.`);
+      throw new AlreadyExistsError(
+        `Plugin with name '${plugin.name}' already registered.`,
+      );
     }
 
     this.plugins.add(plugin);

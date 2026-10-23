@@ -187,7 +187,7 @@ export const _getLatestMessageFromUser = getLatestMessageFromUser;
  *   {@link convertExamplesToText} to select the function-call fence style.
  * @returns A promise resolving to a formatted string ready to be appended to a
  *   system instruction.
- * @throws {Error} When `examples` is neither an array nor a
+ * @throws {InputValidationError} When `examples` is neither an array nor a
  *   {@link BaseExampleProvider}.
  */
 export async function buildExampleSi(
@@ -202,5 +202,5 @@ export async function buildExampleSi(
     return convertExamplesToText(await examples.getExamples(query), model);
   }
 
-  throw new Error('Invalid example configuration');
+  throw new InputValidationError('Invalid example configuration');
 }

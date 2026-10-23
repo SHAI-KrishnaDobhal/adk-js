@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {LocalEnvironment} from '@google/adk';
+import {InputValidationError, LocalEnvironment} from '@google/adk';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
@@ -214,6 +214,7 @@ describe('LocalEnvironment', () => {
       await expect(env.readFile('..')).rejects.toThrow(
         /escapes working directory/,
       );
+      await expect(env.readFile('..')).rejects.toThrow(InputValidationError);
     });
 
     it('rejects an absolute path outside the working directory', async () => {

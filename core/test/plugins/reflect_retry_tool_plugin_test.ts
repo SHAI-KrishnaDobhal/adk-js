@@ -6,6 +6,7 @@
 
 import {describe, expect, it} from 'vitest';
 import {Context} from '../../src/agents/context.js';
+import {InputValidationError} from '../../src/errors/input_validation_error.js';
 import {
   GLOBAL_SCOPE_KEY,
   REFLECT_AND_RETRY_RESPONSE_TYPE,
@@ -108,6 +109,9 @@ describe('ReflectAndRetryToolPlugin', () => {
     it('should throw error for negative maxRetries', () => {
       expect(() => new ReflectAndRetryToolPlugin({maxRetries: -1})).toThrow(
         'maxRetries must be a non-negative integer.',
+      );
+      expect(() => new ReflectAndRetryToolPlugin({maxRetries: -1})).toThrow(
+        InputValidationError,
       );
     });
   });

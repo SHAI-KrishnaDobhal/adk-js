@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {AuthScheme, OAuth2Auth} from '@google/adk';
+import {AuthScheme, InputValidationError, OAuth2Auth} from '@google/adk';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {
   AuthorizationCodeParams,
@@ -175,6 +175,12 @@ describe('oauth2_utils', () => {
           new URLSearchParams(),
         ),
       ).rejects.toThrow('SSRF protection');
+      await expect(
+        fetchOAuth2Tokens(
+          'https://169.254.169.254/token',
+          new URLSearchParams(),
+        ),
+      ).rejects.toThrow(InputValidationError);
       expect(fetch).not.toHaveBeenCalled();
     });
   });

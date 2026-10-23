@@ -5,6 +5,7 @@
  */
 
 import {
+  AlreadyExistsError,
   BaseAgent,
   BasePlugin,
   BaseTool,
@@ -184,6 +185,9 @@ describe('PluginManager', () => {
     expect(() => service.registerPlugin(plugin1)).toThrowError(
       /Plugin 'plugin1' already registered/,
     );
+    expect(() => service.registerPlugin(plugin1)).toThrowError(
+      AlreadyExistsError,
+    );
   });
 
   it('should throw an error when registering a duplicate plugin name', () => {
@@ -191,6 +195,9 @@ describe('PluginManager', () => {
     const plugin1Duplicate = new TestPlugin('plugin1');
     expect(() => service.registerPlugin(plugin1Duplicate)).toThrowError(
       /Plugin with name 'plugin1' already registered/,
+    );
+    expect(() => service.registerPlugin(plugin1Duplicate)).toThrowError(
+      AlreadyExistsError,
     );
   });
 

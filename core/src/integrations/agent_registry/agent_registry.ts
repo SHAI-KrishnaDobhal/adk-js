@@ -16,6 +16,8 @@ import {RemoteA2AAgent} from '../../a2a/a2a_remote_agent.js';
 import {ReadonlyContext} from '../../agents/readonly_context.js';
 import {AuthCredential} from '../../auth/auth_credential.js';
 import {AuthScheme} from '../../auth/auth_schemes.js';
+import {InputValidationError} from '../../errors/input_validation_error.js';
+import {NotFoundError} from '../../errors/not_found_error.js';
 import {StreamableHTTPConnectionParams} from '../../tools/mcp/mcp_session_manager.js';
 import {logger} from '../../utils/logger.js';
 import {AgentRegistrySingleMCPToolset} from './agent_registry_mcp_toolset.js';
@@ -71,7 +73,9 @@ export class AgentRegistry {
     headerProvider?: (context: ReadonlyContext) => Record<string, string>;
   }) {
     if (!options.projectId || !options.location) {
-      throw new Error('project_id and location must be provided');
+      throw new InputValidationError(
+        'project_id and location must be provided',
+      );
     }
     this.projectId = options.projectId;
     this.location = options.location;
@@ -272,7 +276,7 @@ export class AgentRegistry {
     }
 
     if (!endpointUri) {
-      throw new Error(
+      throw new NotFoundError(
         `MCP Server endpoint URI not found for: ${mcpServerName}`,
       );
     }
@@ -364,7 +368,9 @@ export class AgentRegistry {
     const endpointDetails = await this.getEndpoint(endpointName);
     const {url} = this.getConnectionUri(endpointDetails);
     if (!url) {
-      throw new Error(`Connection URI not found for endpoint: ${endpointName}`);
+      throw new NotFoundError(
+        `Connection URI not found for endpoint: ${endpointName}`,
+      );
     }
 
     const uri = url.replace(/:\w+$/, '');
@@ -440,7 +446,9 @@ export class AgentRegistry {
     );
 
     if (!url) {
-      throw new Error(`A2A connection URI not found for Agent: ${agentName}`);
+      throw new NotFoundError(
+        `A2A connection URI not found for Agent: ${agentName}`,
+      );
     }
 
     const skills: AgentSkill[] = (agentInfo.skills || []).map(

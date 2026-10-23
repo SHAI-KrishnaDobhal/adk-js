@@ -7,6 +7,7 @@
 import {Content, FinishReason, Part} from '@google/genai';
 import {v4 as uuidv4} from 'uuid';
 import {Context} from '../agents/context.js';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {LlmRequest} from '../models/llm_request.js';
 import {LlmResponse} from '../models/llm_response.js';
 import {FunctionTool} from '../tools/function_tool.js';
@@ -71,7 +72,9 @@ export class ReflectAndRetryModelPlugin extends BasePlugin {
 
     const retries = options.maxRetries ?? 3;
     if (retries < 0) {
-      throw new Error('maxRetries must be a non-negative integer.');
+      throw new InputValidationError(
+        'maxRetries must be a non-negative integer.',
+      );
     }
 
     this.maxRetries = retries;

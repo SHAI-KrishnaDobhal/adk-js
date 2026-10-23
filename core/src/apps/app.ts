@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {BasePlugin} from '../plugins/base_plugin.js';
 import {
   asRunnableRoot,
@@ -18,12 +19,14 @@ const VALID_APP_NAME_RE = /^[a-zA-Z][a-zA-Z0-9_-]*$/;
  */
 export function validateAppName(name: string): void {
   if (!VALID_APP_NAME_RE.test(name)) {
-    throw new Error(
+    throw new InputValidationError(
       `Invalid app name '${name}': must start with a letter and can only consist of letters, digits, underscores, and hyphens.`,
     );
   }
   if (name === 'user') {
-    throw new Error("App name cannot be 'user'; reserved for end-user input.");
+    throw new InputValidationError(
+      "App name cannot be 'user'; reserved for end-user input.",
+    );
   }
 }
 
@@ -85,7 +88,7 @@ export class App {
     validateAppName(options.name);
 
     if (options.rootAgent === undefined || options.rootAgent === null) {
-      throw new Error('rootAgent must be provided.');
+      throw new InputValidationError('rootAgent must be provided.');
     }
 
     this.name = options.name;

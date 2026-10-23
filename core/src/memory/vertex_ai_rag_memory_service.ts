@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {Session} from '../sessions/session.js';
 import {formatError} from '../utils/error_utils.js';
 import {logger} from '../utils/logger.js';
@@ -67,7 +68,9 @@ function resolveRagCorpus(
 ): ResolvedRagCorpus {
   const ragCorpus = options.ragCorpus?.trim();
   if (!ragCorpus) {
-    throw new Error('ragCorpus is required for VertexAiRagMemoryService.');
+    throw new InputValidationError(
+      'ragCorpus is required for VertexAiRagMemoryService.',
+    );
   }
   // A resource name must match the full shape, not merely start with
   // `projects/`. A malformed value like `projects/my-proj` is treated as a bare
@@ -87,13 +90,13 @@ function resolveRagCorpus(
     (isResourceName ? segments[3] : process.env['GOOGLE_CLOUD_LOCATION']);
 
   if (!projectId) {
-    throw new Error(
+    throw new InputValidationError(
       'projectId is required for VertexAiRagMemoryService: pass projectId, ' +
         'set GOOGLE_CLOUD_PROJECT, or give ragCorpus as a full resource name.',
     );
   }
   if (!location) {
-    throw new Error(
+    throw new InputValidationError(
       'location is required for VertexAiRagMemoryService: pass location, ' +
         'set GOOGLE_CLOUD_LOCATION, or give ragCorpus as a full resource name.',
     );

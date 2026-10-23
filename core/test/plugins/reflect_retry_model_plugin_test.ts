@@ -7,6 +7,7 @@
 import {Content, FinishReason, FunctionCall, Part} from '@google/genai';
 import {describe, expect, it} from 'vitest';
 import {Context} from '../../src/agents/context.js';
+import {InputValidationError} from '../../src/errors/input_validation_error.js';
 import {LlmRequest} from '../../src/models/llm_request.js';
 import {LlmResponse} from '../../src/models/llm_response.js';
 import {TrackingScope} from '../../src/plugins/_reflect_retry_utils.js';
@@ -75,6 +76,9 @@ describe('ReflectAndRetryModelPlugin', () => {
     it('should throw error for negative maxRetries', () => {
       expect(() => new ReflectAndRetryModelPlugin({maxRetries: -1})).toThrow(
         'maxRetries must be a non-negative integer.',
+      );
+      expect(() => new ReflectAndRetryModelPlugin({maxRetries: -1})).toThrow(
+        InputValidationError,
       );
     });
   });

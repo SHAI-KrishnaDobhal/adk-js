@@ -6,6 +6,7 @@
 
 import {createHash, randomBytes} from 'node:crypto';
 
+import {InputValidationError} from '../../errors/input_validation_error.js';
 import {logger} from '../../utils/logger.js';
 import {redactUriPassword} from '../../utils/redact_uri.js';
 import {OAuth2Auth} from '../auth_credential.js';
@@ -79,7 +80,7 @@ export async function fetchOAuth2Tokens(
   // Guard against SSRF: apply the same blocklist used in oauth2_discovery.ts
   // so callers can't point tokenUrl at a private/cloud-metadata address.
   if (!validateDiscoveryUrl(endpoint)) {
-    throw new Error(
+    throw new InputValidationError(
       `SSRF protection: OAuth2 token endpoint '${endpoint}' is not allowed. Must use HTTPS and must not target private/loopback/cloud-metadata addresses.`,
     );
   }

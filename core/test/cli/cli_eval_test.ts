@@ -21,6 +21,7 @@ import {
   InvocationContext,
   LlmAgent,
   MISSING_EVAL_DEPENDENCIES_MESSAGE,
+  NotFoundError,
   parseAndGetEvalsToRun,
   RESPONSE_MATCH_SCORE_KEY,
   runEvals,
@@ -186,6 +187,7 @@ describe('cli/cli_eval', () => {
       await expect(getRootAgent(badFile)).rejects.toThrow(
         /No rootAgent found in module/,
       );
+      await expect(getRootAgent(badFile)).rejects.toThrow(NotFoundError);
       expect(await tryGetResetFunc(badFile)).toBeUndefined();
     });
   });

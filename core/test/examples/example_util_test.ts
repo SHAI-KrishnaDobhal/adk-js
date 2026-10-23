@@ -140,6 +140,10 @@ describe('buildExampleSi', () => {
     await expect(buildExampleSi({} as any, 'query')).rejects.toThrow(
       'Invalid example configuration',
     );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await expect(buildExampleSi({} as any, 'query')).rejects.toThrow(
+      InputValidationError,
+    );
   });
 });
 

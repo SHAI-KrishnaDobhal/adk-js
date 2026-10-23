@@ -8,6 +8,7 @@ import {
   createEvent,
   createSession,
   getLogger,
+  InputValidationError,
   SearchMemoryResponse,
   Session,
   VertexAiRagMemoryService,
@@ -142,6 +143,9 @@ describe('VertexAiRagMemoryService constructor', () => {
   it('throws when ragCorpus is empty', () => {
     expect(() => service(fakeRagApiClient(), {ragCorpus: ''})).toThrow(
       'ragCorpus is required for VertexAiRagMemoryService.',
+    );
+    expect(() => service(fakeRagApiClient(), {ragCorpus: ''})).toThrow(
+      InputValidationError,
     );
   });
 

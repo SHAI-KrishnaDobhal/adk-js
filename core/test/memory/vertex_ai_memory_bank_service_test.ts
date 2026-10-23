@@ -10,6 +10,7 @@ import {
   createSession,
   Event,
   getLogger,
+  InputValidationError,
   MemoryEntry,
   Session,
   VertexAiMemoryBankService,
@@ -101,6 +102,12 @@ describe('VertexAiMemoryBankService', () => {
           {} as unknown as VertexAiMemoryBankServiceOptions,
         ),
     ).toThrow('agentEngineId is required for VertexAiMemoryBankService.');
+    expect(
+      () =>
+        new VertexAiMemoryBankService(
+          {} as unknown as VertexAiMemoryBankServiceOptions,
+        ),
+    ).toThrow(InputValidationError);
   });
 
   it('warns if agentEngineId looks like a full path', () => {

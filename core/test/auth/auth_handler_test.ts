@@ -9,6 +9,7 @@ import {
   AuthCredential,
   AuthCredentialTypes,
   AuthHandler,
+  InputValidationError,
   OAuth2Auth,
   State,
 } from '@google/adk';
@@ -176,6 +177,9 @@ describe('AuthHandler', () => {
 
       await expect(handler.parseAndStoreAuthResponse(state)).rejects.toThrow(
         'credentialKey is empty.',
+      );
+      await expect(handler.parseAndStoreAuthResponse(state)).rejects.toThrow(
+        InputValidationError,
       );
       expect(state.get('temp:')).toBeUndefined();
       expect(state.hasDelta()).toBe(false);

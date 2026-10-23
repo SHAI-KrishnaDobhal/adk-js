@@ -5,6 +5,7 @@
  */
 
 import {InvocationContext} from '../agents/invocation_context.js';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {hasThoughts, pruneThoughts} from '../events/event.js';
 import {BaseContextCompactor} from './base_context_compactor.js';
 import {isEventVisibleInIsolationScope} from './compaction_utils.js';
@@ -29,7 +30,9 @@ export class TrajectoryThoughtPruningCompactor implements BaseContextCompactor {
 
   constructor(options: TrajectoryThoughtPruningCompactorOptions) {
     if (options.eventRetentionSize < 0) {
-      throw new Error('eventRetentionSize must be a non-negative integer.');
+      throw new InputValidationError(
+        'eventRetentionSize must be a non-negative integer.',
+      );
     }
     this.eventRetentionSize = options.eventRetentionSize;
   }

@@ -7,6 +7,7 @@
 import {
   BaseAgent,
   Event,
+  InputValidationError,
   InvocationContext,
   PluginManager,
   Session,
@@ -63,6 +64,9 @@ describe('TrajectoryThoughtPruningCompactor', () => {
       expect(
         () => new TrajectoryThoughtPruningCompactor({eventRetentionSize: -1}),
       ).toThrow('eventRetentionSize must be a non-negative integer.');
+      expect(
+        () => new TrajectoryThoughtPruningCompactor({eventRetentionSize: -1}),
+      ).toThrow(InputValidationError);
     });
 
     it('should not throw on non-negative eventRetentionSize', () => {

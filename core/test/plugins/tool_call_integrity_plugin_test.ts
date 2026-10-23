@@ -10,6 +10,7 @@ import {
   createEvent,
   createSession,
   Event,
+  InputValidationError,
   INTERNAL_METADATA_PREFIX,
   InvocationContext,
   markRestored,
@@ -137,6 +138,12 @@ describe('ToolCallIntegrityPlugin', () => {
             secretKey: secretKey as unknown as Uint8Array,
           }),
       ).toThrow('non-empty bytes');
+      expect(
+        () =>
+          new ToolCallIntegrityPlugin({
+            secretKey: secretKey as unknown as Uint8Array,
+          }),
+      ).toThrow(InputValidationError);
     });
 
     it('copies the key so later changes to the buffer do not apply', async () => {

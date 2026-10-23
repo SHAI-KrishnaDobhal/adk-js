@@ -6,6 +6,7 @@
 
 import {cloneDeep} from 'lodash-es';
 
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {State} from '../sessions/state.js';
 import {randomUUID} from '../utils/env_aware_utils.js';
 
@@ -43,11 +44,11 @@ export class AuthHandler {
    * Stores the exchanged credential in the session state.
    *
    * @param state The session state to store the credential in.
-   * @throws Error: If the auth config has no credentialKey.
+   * @throws {InputValidationError} If the auth config has no credentialKey.
    */
   async parseAndStoreAuthResponse(state: State): Promise<void> {
     if (!this.authConfig.credentialKey) {
-      throw new Error('credentialKey is empty.');
+      throw new InputValidationError('credentialKey is empty.');
     }
 
     const credentialKey = 'temp:' + this.authConfig.credentialKey;
@@ -84,8 +85,8 @@ export class AuthHandler {
    * `rawAuthCredential` are the handler's own objects.
    *
    * @return The auth config to request from the client.
-   * @throws Error: If an OAuth2 or OpenID Connect scheme has no raw
-   *     credential, no `oauth2` on it, or no client ID and secret.
+   * @throws {InputValidationError} If an OAuth2 or OpenID Connect scheme
+   *     has no raw credential, no `oauth2` on it, or no client ID and secret.
    */
   generateAuthRequest(): AuthConfig {
     const authSchemeType = this.authConfig.authScheme.type;
@@ -99,11 +100,13 @@ export class AuthHandler {
     }
 
     if (!this.authConfig.rawAuthCredential) {
-      throw new Error(`Auth Scheme ${authSchemeType} requires authCredential.`);
+      throw new InputValidationError(
+        `Auth Scheme ${authSchemeType} requires authCredential.`,
+      );
     }
 
     if (!this.authConfig.rawAuthCredential.oauth2) {
-      throw new Error(
+      throw new InputValidationError(
         `Auth Scheme ${authSchemeType} requires oauth2 in authCredential.`,
       );
     }
@@ -121,7 +124,7 @@ export class AuthHandler {
       !this.authConfig.rawAuthCredential.oauth2.clientId ||
       !this.authConfig.rawAuthCredential.oauth2.clientSecret
     ) {
-      throw new Error(
+      throw new InputValidationError(
         `Auth Scheme ${authSchemeType} requires both clientId and clientSecret in authCredential.oauth2.`,
       );
     }
@@ -146,9 +149,9 @@ export class AuthHandler {
    * client, and leaves out `scope` when the scheme lists no scopes.
    *
    * @return An AuthCredential object containing the auth URI and state.
-   * @throws Error: If the authorization endpoint is not configured in the
-   *     auth scheme, or the credential requests a code challenge method other
-   *     than 'S256'.
+   * @throws {InputValidationError} If the authorization endpoint is not
+   *     configured in the auth scheme, or the credential requests a code
+   *     challenge method other than 'S256'.
    */
   generateAuthUri(): AuthCredential | undefined {
     const authScheme = this.authConfig.authScheme;
@@ -164,7 +167,7 @@ export class AuthHandler {
       codeChallengeMethod &&
       codeChallengeMethod !== S256_CODE_CHALLENGE_METHOD
     ) {
-      throw new Error(
+      throw new InputValidationError(
         `Unsupported codeChallengeMethod: ${codeChallengeMethod}. Only '${S256_CODE_CHALLENGE_METHOD}' is supported.`,
       );
     }
@@ -197,7 +200,9 @@ export class AuthHandler {
     }
 
     if (!authorizationEndpoint) {
-      throw new Error('Authorization endpoint not configured in auth scheme.');
+      throw new InputValidationError(
+        'Authorization endpoint not configured in auth scheme.',
+      );
     }
 
     const state = randomUUID();

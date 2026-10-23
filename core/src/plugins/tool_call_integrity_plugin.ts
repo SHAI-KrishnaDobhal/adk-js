@@ -14,6 +14,7 @@ import {Content, FunctionCall} from '@google/genai';
 
 import {Context} from '../agents/context.js';
 import {InvocationContext} from '../agents/invocation_context.js';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {createEvent, Event, getFunctionCalls} from '../events/event.js';
 import {
   INTERNAL_METADATA_PREFIX,
@@ -224,8 +225,8 @@ export class ToolCallIntegrityPlugin extends BasePlugin {
   private cryptoKeys?: Promise<CryptoKey[]>;
 
   /**
-   * @throws {Error} If `secretKey` is empty or contains a key that is not
-   *     non-empty bytes.
+   * @throws {InputValidationError} If `secretKey` is empty or contains a key
+   *     that is not non-empty bytes.
    */
   constructor(options: ToolCallIntegrityPluginOptions) {
     super(options.name ?? 'tool_call_integrity');
@@ -240,7 +241,7 @@ export class ToolCallIntegrityPlugin extends BasePlugin {
       rawKeys.length === 0 ||
       !rawKeys.every((key) => key instanceof Uint8Array && key.length > 0)
     ) {
-      throw new Error(
+      throw new InputValidationError(
         'secretKey must be non-empty bytes or a non-empty list of them.',
       );
     }
