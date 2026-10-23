@@ -12,6 +12,7 @@ import {
   HttpOptions,
   LiveServerMessage,
 } from '@google/genai';
+import {InputValidationError} from '../errors/input_validation_error.js';
 
 import {isBrowser, isEnterpriseModeEnabled} from '../utils/env_aware_utils.js';
 import {logger} from '../utils/logger.js';
@@ -117,7 +118,7 @@ export class Gemini extends BaseLlm {
       apiKey,
     });
     if (!params.vertexai && !params.apiKey) {
-      throw new Error(
+      throw new InputValidationError(
         'API key must be provided via constructor or the GOOGLE_GENAI_API_KEY, GOOGLE_API_KEY or GEMINI_API_KEY environment variable.',
       );
     }
@@ -402,12 +403,12 @@ export function geminiInitParams({
       params.location = process.env['GOOGLE_CLOUD_LOCATION'];
     }
     if (!params.project) {
-      throw new Error(
+      throw new InputValidationError(
         'VertexAI project must be provided via constructor or GOOGLE_CLOUD_PROJECT environment variable.',
       );
     }
     if (!params.location) {
-      throw new Error(
+      throw new InputValidationError(
         'VertexAI location must be provided via constructor or GOOGLE_CLOUD_LOCATION environment variable.',
       );
     }

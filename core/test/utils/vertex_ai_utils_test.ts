@@ -5,6 +5,7 @@
  */
 
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
+import {InputValidationError} from '../../src/errors/input_validation_error.js';
 import {logger} from '../../src/utils/logger.js';
 import {getExpressModeApiKey} from '../../src/utils/vertex_ai_utils.js';
 
@@ -29,6 +30,9 @@ describe('vertex_ai_utils', () => {
       expect(() =>
         getExpressModeApiKey('my-project', undefined, 'my-api-key'),
       ).toThrow('Cannot specify project or location and expressModeApiKey.');
+      expect(() =>
+        getExpressModeApiKey('my-project', undefined, 'my-api-key'),
+      ).toThrow(InputValidationError);
     });
 
     it('should throw when both location and expressModeApiKey are provided', () => {

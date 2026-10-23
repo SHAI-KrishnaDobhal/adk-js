@@ -16,6 +16,7 @@ import {
 } from 'zod-to-json-schema';
 import {z as z3} from 'zod/v3';
 import {toJSONSchema as toJSONSchemaV4, z as z4} from 'zod/v4';
+import {InputValidationError} from '../errors/input_validation_error.js';
 
 type ZodSchema<T = unknown> = z3.ZodType<T> | z4.ZodType<T>;
 
@@ -71,7 +72,7 @@ export function zodObjectToSchema(
   schema: z3.ZodObject<z3.ZodRawShape> | z4.ZodObject<z4.ZodRawShape>,
 ): Schema {
   if (!isZodObject(schema)) {
-    throw new Error('Expected a Zod Object');
+    throw new InputValidationError('Expected a Zod Object');
   }
 
   if (isZodV4Schema(schema)) {

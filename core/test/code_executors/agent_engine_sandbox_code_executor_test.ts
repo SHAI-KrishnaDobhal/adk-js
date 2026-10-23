@@ -11,6 +11,7 @@ import {
   BaseLlmConnection,
   CodeExecutionLanguage,
   InMemoryRunner,
+  InputValidationError,
   InvocationContext,
   LlmAgent,
   LlmRequest,
@@ -137,6 +138,10 @@ describe('AgentEngineSandboxCodeExecutor', () => {
       () =>
         new AgentEngineSandboxCodeExecutor({sandboxResourceName: 'invalid'}),
     ).toThrow('Invalid sandbox resource name');
+    expect(
+      () =>
+        new AgentEngineSandboxCodeExecutor({sandboxResourceName: 'invalid'}),
+    ).toThrow(InputValidationError);
   });
 
   it('throws error for invalid agentEngineResourceName', () => {

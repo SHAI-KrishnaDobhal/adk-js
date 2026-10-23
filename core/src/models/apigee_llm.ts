@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import {HttpOptions} from '@google/genai';
+import {InputValidationError} from '../errors/input_validation_error.js';
 
 import {isBrowser} from '../utils/env_aware_utils.js';
 import {logger} from '../utils/logger.js';
@@ -70,7 +71,7 @@ export class ApigeeLlm extends Gemini {
     headers,
   }: ApigeeLlmParams) {
     if (!validateModel(model)) {
-      throw new Error(
+      throw new InputValidationError(
         `Model ${
           model
         } is not a valid Apigee model, expected apigee/[<provider>/][<version>/]<model_id>`,
@@ -87,7 +88,7 @@ export class ApigeeLlm extends Gemini {
       this.proxyUrl = process.env[APIGEE_PROXY_URL_ENV_VARIABLE_NAME] ?? '';
     }
     if (!this.proxyUrl) {
-      throw new Error(
+      throw new InputValidationError(
         `Proxy URL must be provided via the constructor or ${
           APIGEE_PROXY_URL_ENV_VARIABLE_NAME
         } environment variable.`,

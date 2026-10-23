@@ -13,6 +13,7 @@ import {
   createEvent,
   createEventActions,
   createSession,
+  InputValidationError,
   Runner,
   RunnerConfig,
   Session,
@@ -83,6 +84,9 @@ describe('A2AAgentExecutor', () => {
     const ctx = createRequestContext({userMessage: undefined});
     await expect(executor.execute(ctx, mockEventBus)).rejects.toThrow(
       'message not provided',
+    );
+    await expect(executor.execute(ctx, mockEventBus)).rejects.toThrow(
+      InputValidationError,
     );
   });
 

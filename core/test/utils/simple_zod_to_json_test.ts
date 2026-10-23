@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {zodObjectToSchema} from '@google/adk';
+import {InputValidationError, zodObjectToSchema} from '@google/adk';
 import {Type} from '@google/genai';
 import {describe, expect, it} from 'vitest';
 import {z as z3} from 'zod/v3';
@@ -373,7 +373,7 @@ describe('zodObjectToSchema', () => {
       const schema = z3.string();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect(() => zodObjectToSchema(schema as any)).toThrow(
-        new Error('Expected a Zod Object'),
+        new InputValidationError('Expected a Zod Object'),
       );
     });
 

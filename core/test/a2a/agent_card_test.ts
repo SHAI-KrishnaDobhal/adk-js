@@ -29,6 +29,7 @@ import {
   BuiltInCodeExecutor,
   FunctionTool,
   getA2AAgentCard,
+  InputValidationError,
   LlmAgent,
   LoopAgent,
   ParallelAgent,
@@ -718,6 +719,9 @@ describe('Agent Card', () => {
       ).rejects.toThrow(
         'Refusing to fetch agent card from a link-local address: cards.example.com',
       );
+      await expect(
+        resolveAgentCard('http://cards.example.com/'),
+      ).rejects.toThrow(InputValidationError);
       expect(fetchMock).not.toHaveBeenCalled();
     });
 
@@ -806,6 +810,7 @@ describe('Agent Card', () => {
       await expect(rejection).rejects.toThrow(
         /Unsupported agent card URL scheme/,
       );
+      await expect(rejection).rejects.toThrow(InputValidationError);
       await expect(rejection).rejects.not.toThrow(
         /Failed to read agent card from file/,
       );

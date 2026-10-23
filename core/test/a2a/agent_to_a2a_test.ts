@@ -18,6 +18,7 @@ import {A2AAgentExecutor} from '../../src/a2a/agent_executor.js';
 import {A2aUserBuilder, toA2a} from '../../src/a2a/agent_to_a2a.js';
 import {BaseAgent} from '../../src/agents/base_agent.js';
 import {InvocationContext} from '../../src/agents/invocation_context.js';
+import {InputValidationError} from '../../src/errors/input_validation_error.js';
 import {Event} from '../../src/events/event.js';
 import {Runner} from '../../src/runner/runner.js';
 import {BaseSessionService} from '../../src/sessions/base_session_service.js';
@@ -229,6 +230,11 @@ describe('toA2a', () => {
       ).rejects.toThrow(
         /refusing to mount the A2A server without authentication/i,
       );
+      await expect(
+        toA2a(agent, {
+          allowUnauthenticated: false,
+        }),
+      ).rejects.toThrow(InputValidationError);
     });
 
     it('warns and mounts with noAuthentication when allowUnauthenticated is true', async () => {

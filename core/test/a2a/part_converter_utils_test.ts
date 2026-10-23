@@ -24,6 +24,7 @@ import {
   toGenAIParts,
   toGenAIPartText,
 } from '../../src/a2a/part_converter_utils.js';
+import {InputValidationError} from '../../src/errors/input_validation_error.js';
 
 describe('part_converter_utils', () => {
   describe('toA2ATextPart', () => {
@@ -361,6 +362,7 @@ describe('part_converter_utils', () => {
       expect(() => toGenAIPartFile(a2aPart)).toThrow(
         'Not a file part: {"kind":"file","file":{}}',
       );
+      expect(() => toGenAIPartFile(a2aPart)).toThrow(InputValidationError);
     });
   });
 
@@ -428,6 +430,7 @@ describe('part_converter_utils', () => {
         kind: 'data',
       } as unknown as A2ADataPart;
       expect(() => toGenAIPartData(a2aPart)).toThrow('No data in part');
+      expect(() => toGenAIPartData(a2aPart)).toThrow(InputValidationError);
     });
 
     it('falls back to stringified text if type is unknown', () => {
@@ -472,6 +475,7 @@ describe('part_converter_utils', () => {
     it('throws on unknown kind', () => {
       const a2aPart = {kind: 'unknown'} as unknown as A2APart;
       expect(() => toGenAIPart(a2aPart)).toThrow('Unknown part kind');
+      expect(() => toGenAIPart(a2aPart)).toThrow(InputValidationError);
     });
   });
 

@@ -11,6 +11,7 @@ import {
   LLMRegistry,
   LlmRequest,
   LlmResponse,
+  NotFoundError,
 } from '@google/adk';
 import {beforeAll, describe, expect, it} from 'vitest';
 
@@ -109,6 +110,7 @@ describe('LLMRegistry.resolve with alternation patterns', () => {
     expect(() => LLMRegistry.resolve('model-a-extra')).toThrow(
       'Model model-a-extra not found.',
     );
+    expect(() => LLMRegistry.resolve('model-a-extra')).toThrow(NotFoundError);
     expect(() => LLMRegistry.resolve('prefix-model-b')).toThrow(
       'Model prefix-model-b not found.',
     );

@@ -9,6 +9,7 @@ import * as fs from 'node:fs/promises';
 import {PassThrough} from 'node:stream';
 import {text} from 'node:stream/consumers';
 import {setTimeout as delay} from 'node:timers/promises';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {logger} from '../utils/logger.js';
 
 type DockerConstructor = new (options?: Docker.DockerOptions) => Docker;
@@ -211,7 +212,7 @@ export class DockerContainer {
     try {
       await fs.access(dockerPath);
     } catch {
-      throw new Error(`Invalid Docker path: ${dockerPath}`);
+      throw new InputValidationError(`Invalid Docker path: ${dockerPath}`);
     }
     const client = await this.getClient();
     logger.debug('Building Docker image...');

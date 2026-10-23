@@ -5,6 +5,8 @@
  */
 
 import {describe, expect, it, vi} from 'vitest';
+import {InputValidationError} from '../../src/errors/input_validation_error.js';
+import {NotFoundError} from '../../src/errors/not_found_error.js';
 import {Router, runWithRouting} from '../../src/utils/failover_utils.js';
 
 type Context = {requestId: string};
@@ -57,6 +59,9 @@ describe('runWithRouting', () => {
       await expect(
         collectAsync(runWithRouting(items, context, router, async () => 'x')),
       ).rejects.toThrow('Initial routing failed, no item selected.');
+      await expect(
+        collectAsync(runWithRouting(items, context, router, async () => 'x')),
+      ).rejects.toThrow(InputValidationError);
     });
 
     it('throws when initial key is not in items', async () => {
@@ -67,6 +72,9 @@ describe('runWithRouting', () => {
       await expect(
         collectAsync(runWithRouting(items, context, router, async () => 'x')),
       ).rejects.toThrow('Item not found for key: missing');
+      await expect(
+        collectAsync(runWithRouting(items, context, router, async () => 'x')),
+      ).rejects.toThrow(NotFoundError);
     });
   });
 

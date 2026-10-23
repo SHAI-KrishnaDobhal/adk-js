@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {InputValidationError} from '../errors/input_validation_error.js';
+import {NotFoundError} from '../errors/not_found_error.js';
 import {logger} from './logger.js';
 
 /**
@@ -27,14 +29,14 @@ export async function* runWithRouting<T, C, TYield>(
 ): AsyncGenerator<TYield, void, void> {
   const initialKey = await router(items, context);
   if (!initialKey) {
-    throw new Error('Initial routing failed, no item selected.');
+    throw new InputValidationError('Initial routing failed, no item selected.');
   }
 
   let selectedKey = initialKey;
   logger.debug(`Router selected initial key: ${selectedKey}`);
   let selectedItem = items[selectedKey];
   if (!selectedItem) {
-    throw new Error(`Item not found for key: ${selectedKey}`);
+    throw new NotFoundError(`Item not found for key: ${selectedKey}`);
   }
 
   const triedKeys = new Set<string>([selectedKey]);
@@ -77,7 +79,7 @@ export async function* runWithRouting<T, C, TYield>(
         selectedKey = nextKey;
         selectedItem = items[selectedKey];
         if (!selectedItem) {
-          throw new Error(`Item not found for key: ${selectedKey}`);
+          throw new NotFoundError(`Item not found for key: ${selectedKey}`);
         }
         triedKeys.add(selectedKey);
       } else {

@@ -4,7 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {getClientLabels, runWithClientLabel} from '@google/adk';
+import {
+  getClientLabels,
+  InputValidationError,
+  runWithClientLabel,
+} from '@google/adk';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {
   getTrackingHeaders,
@@ -148,6 +152,10 @@ describe('client_labels', () => {
       expect(() => {
         runWithClientLabel('   ', () => {});
       }).toThrow('Client label must be a non-empty string.');
+
+      expect(() => {
+        runWithClientLabel('', () => {});
+      }).toThrow(InputValidationError);
     });
   });
 

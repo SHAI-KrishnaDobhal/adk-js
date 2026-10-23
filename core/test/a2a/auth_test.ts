@@ -8,6 +8,7 @@ import {Request} from 'express';
 import {IncomingHttpHeaders} from 'node:http';
 import {describe, expect, it} from 'vitest';
 import {bearerTokenUserBuilder} from '../../src/a2a/auth.js';
+import {InputValidationError} from '../../src/errors/input_validation_error.js';
 
 const TOKEN = 's3cr3t';
 
@@ -27,6 +28,7 @@ describe('bearerTokenUserBuilder', () => {
     expect(() => bearerTokenUserBuilder(token)).toThrow(
       /empty A2A bearer token is not a valid authenticator/,
     );
+    expect(() => bearerTokenUserBuilder(token)).toThrow(InputValidationError);
   });
 
   it.each([

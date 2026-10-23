@@ -19,6 +19,7 @@ import {
 import {
   Event as AdkEvent,
   createEvent,
+  InputValidationError,
   InvocationContext,
   RemoteA2AAgent,
   RemoteA2AAgentConfig,
@@ -103,6 +104,10 @@ describe('A2ARemoteAgent', () => {
       () =>
         new RemoteA2AAgent({name: 'test'} as unknown as RemoteA2AAgentConfig),
     ).toThrow('Either AgentCard or Client must be provided');
+    expect(
+      () =>
+        new RemoteA2AAgent({name: 'test'} as unknown as RemoteA2AAgentConfig),
+    ).toThrow(InputValidationError);
   });
 
   it('should resolve card from URL and send message streaming', async () => {

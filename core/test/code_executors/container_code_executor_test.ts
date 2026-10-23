@@ -8,6 +8,7 @@ import {
   CodeExecutionLanguage,
   ContainerCodeExecutor,
   ExecuteCodeParams,
+  InputValidationError,
   InvocationContext,
 } from '@google/adk';
 import Dockerode from 'dockerode';
@@ -173,6 +174,7 @@ describe('ContainerCodeExecutor', () => {
     expect(() => new ContainerCodeExecutor()).toThrow(
       'Either image or dockerPath must be set for ContainerCodeExecutor.',
     );
+    expect(() => new ContainerCodeExecutor()).toThrow(InputValidationError);
   });
 
   it('freezes stateful and optimizeDataFile to false', () => {
@@ -343,9 +345,11 @@ describe('ContainerCodeExecutor', () => {
       docker: asDocker(docker),
     });
 
-    await expect(executor.executeCode(makeParams('print(1)'))).rejects.toThrow(
+    const result = executor.executeCode(makeParams('print(1)'));
+    await expect(result).rejects.toThrow(
       `Invalid Docker path: ${path.resolve(missing)}`,
     );
+    await expect(result).rejects.toThrow(InputValidationError);
   });
 
   it('surfaces image build failures', async () => {

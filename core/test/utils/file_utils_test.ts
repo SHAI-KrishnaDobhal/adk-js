@@ -9,6 +9,7 @@ import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
+import {InputValidationError} from '../../src/errors/input_validation_error.js';
 import {getMimeTypeAndEncoding} from '../../src/utils/file_extension_utils.js';
 import {guessMimeType, materializeFiles} from '../../src/utils/file_utils.js';
 
@@ -67,6 +68,9 @@ describe('file_utils', () => {
 
       await expect(materializeFiles(files, tempDir)).rejects.toThrow(
         /Path traversal detected/,
+      );
+      await expect(materializeFiles(files, tempDir)).rejects.toThrow(
+        InputValidationError,
       );
     });
 

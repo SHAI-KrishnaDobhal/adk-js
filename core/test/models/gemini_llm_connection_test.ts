@@ -14,6 +14,7 @@ import {
   Session,
 } from '@google/genai';
 import {beforeEach, describe, expect, it, Mocked, vi} from 'vitest';
+import {InputValidationError} from '../../src/errors/input_validation_error.js';
 import {GeminiLlmConnection} from '../../src/models/gemini_llm_connection.js';
 import {AsyncQueue} from '../../src/utils/async_queue.js';
 import {liveServerMessage} from '../utils/live_server_message_test_utils.js';
@@ -166,6 +167,9 @@ describe('GeminiLlmConnection', () => {
       );
       await expect(connection.sendContent({})).rejects.toThrow(
         'Content must have parts.',
+      );
+      await expect(connection.sendContent({})).rejects.toThrow(
+        InputValidationError,
       );
     });
   });

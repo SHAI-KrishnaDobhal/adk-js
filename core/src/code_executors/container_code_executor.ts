@@ -6,6 +6,7 @@
 
 import type Docker from 'dockerode';
 import * as path from 'node:path';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {experimental} from '../utils/experimental.js';
 import {logger} from '../utils/logger.js';
 import {BaseCodeExecutor, ExecuteCodeParams} from './base_code_executor.js';
@@ -132,13 +133,13 @@ export class ContainerCodeExecutor extends BaseCodeExecutor {
   constructor(options: ContainerCodeExecutorOptions = {}) {
     super();
     if (!options.image && !options.dockerPath) {
-      throw new Error(
+      throw new InputValidationError(
         'Either image or dockerPath must be set for ContainerCodeExecutor.',
       );
     }
     this.timeoutSeconds = options.timeoutSeconds ?? DEFAULT_TIMEOUT_SECONDS;
     if (this.timeoutSeconds <= 0) {
-      throw new Error(
+      throw new InputValidationError(
         'timeoutSeconds must be greater than 0 for ContainerCodeExecutor.',
       );
     }

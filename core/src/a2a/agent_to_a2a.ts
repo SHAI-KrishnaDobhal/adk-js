@@ -10,6 +10,7 @@ import type {UserBuilder} from '@a2a-js/sdk/server/express';
 import type express from 'express';
 import {StreamingMode} from '../agents/run_config.js';
 import {BaseArtifactService} from '../artifacts/base_artifact_service.js';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {BaseMemoryService} from '../memory/base_memory_service.js';
 import {Runner} from '../runner/runner.js';
 import {BaseSessionService} from '../sessions/base_session_service.js';
@@ -158,7 +159,7 @@ function resolveA2aUserBuilder(
     return a2aExpress.UserBuilder.noAuthentication;
   }
 
-  throw new Error(
+  throw new InputValidationError(
     'toA2a: refusing to mount the A2A server without authentication. The A2A ' +
       'surface lets any network-reachable caller invoke this agent and its ' +
       'tools with arbitrary input and read the output, so it must be ' +

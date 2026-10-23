@@ -18,6 +18,7 @@ import {
 import {Client, ClientFactory} from '@a2a-js/sdk/client';
 import {BaseAgent, BaseAgentConfig} from '../agents/base_agent.js';
 import {InvocationContext} from '../agents/invocation_context.js';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {Event as AdkEvent, createEvent} from '../events/event.js';
 import {randomUUID} from '../utils/env_aware_utils.js';
 import {logger} from '../utils/logger.js';
@@ -134,7 +135,9 @@ export class RemoteA2AAgent extends BaseAgent<RemoteA2AAgentConfig> {
   constructor(private readonly a2aConfig: RemoteA2AAgentConfig) {
     super(a2aConfig);
     if (!a2aConfig.agentCard && !a2aConfig.client) {
-      throw new Error('Either AgentCard or Client must be provided');
+      throw new InputValidationError(
+        'Either AgentCard or Client must be provided',
+      );
     }
   }
 

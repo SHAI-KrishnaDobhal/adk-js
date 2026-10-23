@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {NotFoundError} from '../errors/not_found_error.js';
 import {logger} from '../utils/logger.js';
 
 import {ApigeeLlm} from './apigee_llm.js';
@@ -104,7 +105,7 @@ export class LLMRegistry {
    * Resolves the model to a BaseLlm subclass.
    * @param model The model name.
    * @returns The BaseLlm subclass.
-   * @throws If the model is not found.
+   * @throws {NotFoundError} If the model is not found.
    */
   static resolve(model: string): BaseLlmType {
     const cachedLlm = LLMRegistry.resolveCache.get(model);
@@ -126,7 +127,7 @@ export class LLMRegistry {
       }
     }
 
-    throw new Error(`Model ${model} not found.`);
+    throw new NotFoundError(`Model ${model} not found.`);
   }
 }
 

@@ -5,6 +5,7 @@
  */
 
 import {timingSafeEqual} from 'node:crypto';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {A2aUserBuilder} from './agent_to_a2a.js';
 
 /** A shared secret identifies a deployment, not an individual principal. */
@@ -46,12 +47,12 @@ function timingSafeEqualStrings(a: string, b: string): boolean {
  *
  * @param token The shared secret callers must present; surrounding whitespace
  *   is trimmed, because HTTP strips it from header values anyway.
- * @throws If `token` is empty or contains only whitespace.
+ * @throws {InputValidationError} If `token` is empty or contains only whitespace.
  */
 export function bearerTokenUserBuilder(token: string): A2aUserBuilder {
   const expected = token.trim();
   if (!expected) {
-    throw new Error(
+    throw new InputValidationError(
       'bearerTokenUserBuilder: an empty A2A bearer token is not a valid ' +
         'authenticator. Supply a real shared secret, or configure no token ' +
         'at all to run the A2A surface unauthenticated.',

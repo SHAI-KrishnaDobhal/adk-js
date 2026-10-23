@@ -12,6 +12,7 @@ import {
   ApigeeLlmParams,
   BaseLlmConnection,
   Gemini,
+  InputValidationError,
   LLMRegistry,
   LlmRequest,
 } from '@google/adk';
@@ -49,6 +50,9 @@ describe('ApigeeLlm', () => {
       expect(() => {
         new ApigeeLlm({model: geminiModelString});
       }).toThrowError(/Proxy URL must be provided/);
+      expect(() => {
+        new ApigeeLlm({model: geminiModelString});
+      }).toThrowError(InputValidationError);
     });
 
     it('gemini uses APIGEE_PROXY_URL env variable if proxyUrl is not provided', () => {

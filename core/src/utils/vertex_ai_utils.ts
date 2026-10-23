@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {isEnterpriseModeEnabled} from './env_aware_utils.js';
 
 export const EXPRESS_MODE_UNSUPPORTED_MESSAGE =
@@ -30,7 +31,7 @@ export function getExpressModeApiKey(
   expressModeApiKey?: string,
 ): string | undefined {
   if ((project || location) && expressModeApiKey) {
-    throw new Error(
+    throw new InputValidationError(
       'Cannot specify project or location and expressModeApiKey. ' +
         'Either use project and location, or just the expressModeApiKey.',
     );

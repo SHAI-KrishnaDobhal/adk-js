@@ -17,6 +17,7 @@
 
 import {lookup} from 'node:dns/promises';
 import {isIP} from 'node:net';
+import {NotFoundError} from '../errors/not_found_error.js';
 
 /** URL schemes that may be fetched (WHATWG `URL.protocol` form). */
 const HTTP_SCHEMES = new Set(['http:', 'https:']);
@@ -128,7 +129,7 @@ export async function resolveHostAddresses(
   const records = await lookup(hostname, {all: true});
   const addresses = [...new Set(records.map((record) => record.address))];
   if (addresses.length === 0) {
-    throw new Error(`Unable to resolve host: ${hostname}`);
+    throw new NotFoundError(`Unable to resolve host: ${hostname}`);
   }
   return addresses;
 }

@@ -8,6 +8,7 @@ import {
   Gemini,
   GeminiParams,
   GoogleLLMVariant,
+  InputValidationError,
   LlmRequest,
   LlmResponse,
   geminiInitParams,
@@ -85,6 +86,9 @@ describe('GoogleLlm', () => {
   it('should throw error if apiKey is missing in constructor', () => {
     expect(() => new TestGemini({model: 'gemini-1.5-flash'})).toThrow(
       /API key must be provided/,
+    );
+    expect(() => new TestGemini({model: 'gemini-1.5-flash'})).toThrow(
+      InputValidationError,
     );
   });
 

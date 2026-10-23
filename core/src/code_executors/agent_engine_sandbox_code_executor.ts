@@ -6,6 +6,7 @@
 
 import {Client} from '@google-cloud/vertexai';
 import {Language} from '@google-cloud/vertexai/build/src/genai/types.js';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {experimental} from '../utils/experimental.js';
 import {guessMimeType} from '../utils/file_utils.js';
 
@@ -111,7 +112,7 @@ export class AgentEngineSandboxCodeExecutor extends BaseCodeExecutor {
         this.projectId = match[1];
         this.location = match[2];
       } else {
-        throw new Error(
+        throw new InputValidationError(
           `Invalid sandbox resource name: ${this.sandboxResourceName}`,
         );
       }
@@ -121,7 +122,7 @@ export class AgentEngineSandboxCodeExecutor extends BaseCodeExecutor {
         this.projectId = match[1];
         this.location = match[2];
       } else {
-        throw new Error(
+        throw new InputValidationError(
           `Invalid agent engine resource name: ${this.agentEngineResourceName}`,
         );
       }
@@ -131,7 +132,7 @@ export class AgentEngineSandboxCodeExecutor extends BaseCodeExecutor {
       this.client = options.client;
     } else {
       if (!this.projectId) {
-        throw new Error('Project ID is required.');
+        throw new InputValidationError('Project ID is required.');
       }
       this.client = new Client({
         project: this.projectId,
