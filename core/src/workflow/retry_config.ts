@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {InputValidationError} from '../errors/input_validation_error.js';
+
 /**
  * An error constructor usable in {@link RetryConfig.exceptions}.
  */
@@ -76,7 +78,7 @@ export function normalizeRetryExceptions(
     if (typeof item === 'function' && item.name) {
       return item.name;
     }
-    throw new Error(
+    throw new InputValidationError(
       `exceptions must contain error class names (string) or error classes, got: ${String(
         item,
       )}`,

@@ -5,6 +5,7 @@
  */
 
 import {AuthConfig} from '../../auth/auth_tool.js';
+import {InputValidationError} from '../../errors/input_validation_error.js';
 import {SchemaLike} from '../../utils/schema.js';
 import {BaseNode, isBaseNode, START} from '../base_node.js';
 import {NodeLike} from '../graph.js';
@@ -99,7 +100,7 @@ export function buildNode(
   options: BuildNodeOptions = {},
 ): BaseNode {
   if (options.maxParallelWorkers !== undefined && !options.parallelWorker) {
-    throw new Error(
+    throw new InputValidationError(
       'maxParallelWorkers can only be set when parallelWorker is true.',
     );
   }
@@ -140,7 +141,7 @@ function buildInnerNode(
       return builder.build(nodeLike, options);
     }
   }
-  throw new Error(
+  throw new InputValidationError(
     `build_node: unsupported node-like value of type ${typeof nodeLike}. ` +
       'Import the node module that handles it (e.g. via the workflow barrel).',
   );
@@ -237,7 +238,7 @@ function cloneWithOverrides(
   if (typeof overrides['name'] === 'string') {
     const name = overrides['name'].trim();
     if (!name) {
-      throw new Error('Node name must be a non-empty string.');
+      throw new InputValidationError('Node name must be a non-empty string.');
     }
     overrides['name'] = name;
   }

@@ -5,6 +5,7 @@
  */
 
 import {describe, expect, it} from 'vitest';
+import {InputValidationError} from '../../src/errors/input_validation_error.js';
 import {
   DynamicNodeFailError,
   isDynamicNodeFailError,
@@ -193,6 +194,9 @@ describe('Phase 4 — dynamic (imperative) workflows', () => {
     it('rejects an empty id rather than silently auto-numbering it', async () => {
       await expect(driveWorkflow(workflowUsing('   '))).rejects.toThrow(
         /cannot be empty/,
+      );
+      await expect(driveWorkflow(workflowUsing('   '))).rejects.toThrow(
+        InputValidationError,
       );
     });
 

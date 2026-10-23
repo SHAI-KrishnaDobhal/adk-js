@@ -5,6 +5,7 @@
  */
 
 import {InvocationContext} from '../agents/invocation_context.js';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {Event} from '../events/event.js';
 import {createEventActions, EventActions} from '../events/event_actions.js';
 import {State} from '../sessions/state.js';
@@ -366,7 +367,7 @@ function assertCustomRunId(
   autoRunIds: ReadonlySet<string>,
 ): void {
   if (runId.trim() === '') {
-    throw new Error(
+    throw new InputValidationError(
       `Invalid runId for node '${nodeName}': a custom run id cannot be empty. ` +
         `Omit runId to let ADK number the run automatically.`,
     );

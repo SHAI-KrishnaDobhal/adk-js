@@ -5,6 +5,7 @@
  */
 
 import {describe, expect, it} from 'vitest';
+import {InputValidationError} from '../../src/errors/input_validation_error.js';
 import {createEvent, Event} from '../../src/events/event.js';
 import {BaseNode} from '../../src/workflow/base_node.js';
 import {FunctionNode} from '../../src/workflow/nodes/function_node.js';
@@ -42,6 +43,10 @@ describe('workflow — maxConcurrency', () => {
       () =>
         new Workflow({name: 'bad0', edges: [['START', n]], maxConcurrency: 0}),
     ).toThrow(/positive integer/);
+    expect(
+      () =>
+        new Workflow({name: 'bad0', edges: [['START', n]], maxConcurrency: 0}),
+    ).toThrow(InputValidationError);
   });
 
   it('rejects a non-integer maxConcurrency', () => {

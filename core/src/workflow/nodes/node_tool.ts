@@ -7,6 +7,7 @@
 import {FunctionDeclaration, Schema, Type} from '@google/genai';
 
 import {Context} from '../../agents/context.js';
+import {InputValidationError} from '../../errors/input_validation_error.js';
 import {BaseTool, RunAsyncToolRequest} from '../../tools/base_tool.js';
 import {
   isZodObject,
@@ -53,7 +54,7 @@ export class NodeTool extends BaseTool {
 
   constructor(node: BaseNode, name?: string, description?: string) {
     if (!node.inputSchema) {
-      throw new Error(
+      throw new InputValidationError(
         `Node '${node.name}' does not have an inputSchema defined. NodeTool ` +
           'requires an explicit input schema on the wrapped node.',
       );

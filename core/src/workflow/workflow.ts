@@ -5,6 +5,7 @@
  */
 
 import {context, trace} from '@opentelemetry/api';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {Event} from '../events/event.js';
 import {tracer, traceWorkflowInvocation} from '../telemetry/tracing.js';
 import {experimental} from '../utils/experimental.js';
@@ -146,12 +147,12 @@ export class Workflow extends BaseNode {
     super({...config, rerunOnResume: config.rerunOnResume ?? true});
     const hasEdges = !!config.edges && config.edges.length > 0;
     if (hasEdges && config.dynamicEntry) {
-      throw new Error(
+      throw new InputValidationError(
         `Workflow "${this.name}": "edges" and "dynamicEntry" are mutually exclusive.`,
       );
     }
     if (!hasEdges && !config.dynamicEntry) {
-      throw new Error(
+      throw new InputValidationError(
         `Workflow "${this.name}" requires either "edges" or "dynamicEntry".`,
       );
     }
@@ -159,7 +160,7 @@ export class Workflow extends BaseNode {
       config.maxConcurrency !== undefined &&
       (!Number.isInteger(config.maxConcurrency) || config.maxConcurrency < 1)
     ) {
-      throw new Error(
+      throw new InputValidationError(
         `Workflow "${this.name}": "maxConcurrency" must be a positive integer ` +
           `(got ${config.maxConcurrency}).`,
       );

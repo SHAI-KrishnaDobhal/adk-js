@@ -5,6 +5,7 @@
  */
 
 import {Content, createModelContent, PartListUnion} from '@google/genai';
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {createEvent, Event, isEvent} from '../events/event.js';
 import {parseWithSchema, SchemaLike} from '../utils/schema.js';
 import {NodeSchemaValidationError} from './errors.js';
@@ -110,7 +111,7 @@ export abstract class BaseNode<TInput = unknown, TOutput = unknown> {
       typeof config.name !== 'string' ||
       config.name.trim().length === 0
     ) {
-      throw new Error('Node name must be a non-empty string.');
+      throw new InputValidationError('Node name must be a non-empty string.');
     }
     this.name = config.name.trim();
     this.description = config.description ?? '';

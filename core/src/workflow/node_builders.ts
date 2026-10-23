@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {InputValidationError} from '../errors/input_validation_error.js';
 import {BaseTool, isBaseTool} from '../tools/base_tool.js';
 import {FunctionNode, FunctionNodeHandler} from './nodes/function_node.js';
 import {ParallelWorker} from './nodes/parallel_worker.js';
@@ -20,7 +21,7 @@ const FUNCTION_BUILDER: NodeBuilder = {
     const handler = value as FunctionNodeHandler;
     const name = options.name ?? (handler as {name?: string}).name;
     if (!name) {
-      throw new Error(
+      throw new InputValidationError(
         'node(): the wrapped function has no name; pass {name} explicitly.',
       );
     }

@@ -5,6 +5,7 @@
  */
 
 import {describe, expect, it} from 'vitest';
+import {InputValidationError} from '../../src/errors/input_validation_error.js';
 import {BaseTool} from '../../src/tools/base_tool.js';
 import {FunctionNode} from '../../src/workflow/nodes/function_node.js';
 import {ToolNode} from '../../src/workflow/nodes/tool_node.js';
@@ -46,6 +47,7 @@ describe('node builder registry', () => {
 
   it('throws for an unnamed function with no name option', () => {
     expect(() => buildNode(anonymousFn())).toThrow(/no name/i);
+    expect(() => buildNode(anonymousFn())).toThrow(InputValidationError);
   });
 
   it('builds a ToolNode from a BaseTool', () => {

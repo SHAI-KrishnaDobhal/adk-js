@@ -14,6 +14,7 @@
  */
 
 import {requiresUserInput} from '../../agents/user_input_request.js';
+import {InputValidationError} from '../../errors/input_validation_error.js';
 import {Event} from '../../events/event.js';
 import {RouteValue} from '../graph.js';
 import type {NodeContext, NodeResult} from '../node_context.js';
@@ -202,7 +203,7 @@ export function resolvedInterruptResponses(
             fr.name === REQUEST_INPUT_FUNCTION_CALL_NAME &&
             event === newestUserTurn
           ) {
-            throw new Error(
+            throw new InputValidationError(
               raised.has(fr.id)
                 ? alreadyAnsweredMessage(fr.id, open)
                 : unroutableReplyMessage(fr.id, open),
@@ -215,7 +216,7 @@ export function resolvedInterruptResponses(
         const mismatch = interruptResponseMismatch(fr.id, response, schema);
         if (mismatch) {
           if (event === newestUserTurn) {
-            throw new Error(mismatch);
+            throw new InputValidationError(mismatch);
           }
           continue;
         }

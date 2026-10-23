@@ -6,6 +6,7 @@
 
 import {describe, expect, it} from 'vitest';
 import {z} from 'zod/v4';
+import {InputValidationError} from '../../src/errors/input_validation_error.js';
 import {
   createEvent,
   Event,
@@ -322,6 +323,9 @@ describe('Phase 5b — a reply that answers no open interrupt', () => {
     expect(() =>
       reconstructNodeStates([raised('gate-1'), reply('no-such-interrupt', 21)]),
     ).toThrow(/'no-such-interrupt'.*does not match any interrupt.*'gate-1'/s);
+    expect(() =>
+      reconstructNodeStates([raised('gate-1'), reply('no-such-interrupt', 21)]),
+    ).toThrow(InputValidationError);
   });
 
   it('leaves the real interrupt answerable after refusing one', () => {

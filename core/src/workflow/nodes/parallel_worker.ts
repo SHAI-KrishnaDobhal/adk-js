@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {InputValidationError} from '../../errors/input_validation_error.js';
 import {BaseNode} from '../base_node.js';
 import {isNodeInterruptedError} from '../errors.js';
 import {RunnableNode} from '../graph.js';
@@ -71,7 +72,9 @@ export class ParallelWorker extends BaseNode {
       config.maxParallelWorkers !== undefined &&
       config.maxParallelWorkers < 1
     ) {
-      throw new Error('maxParallelWorkers must be greater than or equal to 1.');
+      throw new InputValidationError(
+        'maxParallelWorkers must be greater than or equal to 1.',
+      );
     }
     this.inner = built;
     this.maxParallelWorkers = config.maxParallelWorkers;

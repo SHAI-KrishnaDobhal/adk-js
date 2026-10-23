@@ -5,6 +5,7 @@
  */
 
 import {describe, expect, it} from 'vitest';
+import {InputValidationError} from '../../src/errors/input_validation_error.js';
 import {Event} from '../../src/events/event.js';
 import {Runner} from '../../src/runner/runner.js';
 import {InMemorySessionService} from '../../src/sessions/in_memory_session_service.js';
@@ -80,6 +81,9 @@ describe('ParallelWorker', () => {
     const inner = new FunctionNode('x', (_c, v) => v);
     expect(() => new ParallelWorker(inner, {maxParallelWorkers: 0})).toThrow(
       /greater than or equal to 1/,
+    );
+    expect(() => new ParallelWorker(inner, {maxParallelWorkers: 0})).toThrow(
+      InputValidationError,
     );
   });
 
@@ -210,6 +214,9 @@ describe('ParallelWorker registry factory', () => {
     expect(() =>
       buildNode(() => {}, {name: 'x', maxParallelWorkers: 2}),
     ).toThrow(/maxParallelWorkers can only be set/);
+    expect(() =>
+      buildNode(() => {}, {name: 'x', maxParallelWorkers: 2}),
+    ).toThrow(InputValidationError);
   });
 });
 
